@@ -1,0 +1,17 @@
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    text-decoration: none;
+}
+
+.nav {
+    list-style: none;
+
+    display: flex;
+    gap: 32px;
+}
+
