@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Repository, Like } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from './user.entity';
+import { UserEntity } from '../../entities/user.entity';
 import { SearchUserParams, IUserService } from './interfaces/search-user-params';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class UsersService implements IUserService {
   }
 
   async findById(id: number): Promise<UserEntity> {
-    return await this.userRepository.findOneByOrFail({ _id: id });
+    return await this.userRepository.findOneByOrFail({ id });
   }
 
   async findByEmail(email: string): Promise<UserEntity> {

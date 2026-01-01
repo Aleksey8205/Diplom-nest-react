@@ -1,60 +1,67 @@
 import React from "react";
 import "./style/form.css";
-import stackBook from "../../../public/stack-of-books-1.svg"
-
+import StackBooks2 from "../../../public/stack-of-books-2.svg";
 
 const FormSearch = () => {
-
   return (
     <>
-      <form className="form-search">
-        <label htmlFor="title-input">Название:</label>
-        <input
-          className="input"
-          id="title-input"
-          placeholder="Например, Евгений Онегин"
-          type="text"
-          name="bookTitle"
-        />
-
-        <label htmlFor="author-input">Автор:</label>
-        <input
-          className="input"
-          id="author-input"
-          placeholder="Например, Пушкин А.С."
-          type="text"
-          name="authorName"
-        />
-
-        <div className="block-date">
+      <div className="block-form">
+        <form className="form-search">
           <div>
-            <label htmlFor="issue-date">
-              <p>Выдача книги:</p>
+            <label htmlFor="title-input">
+              <span className="label-input">Название:</span>
             </label>
             <input
-              className="input-date"
-              id="issue-date"
-              type="date"
-              name="issueDate"
+              className="input"
+              id="title-input"
+              placeholder="Например, Евгений Онегин"
+              type="text"
+              name="bookTitle"
             />
           </div>
 
           <div>
-            <label htmlFor="return-date">
-              <p>Возврат книги:</p>
+            <label htmlFor="author-input">
+              <span className="label-input">Автор:</span>
             </label>
             <input
-            placeholder="выберите дату"
-              className="input-date"
-              id="return-date"
-              type="date"
-              name="returnDate"
+              className="input"
+              id="author-input"
+              placeholder="Например, Пушкин А.С."
+              type="text"
+              name="authorName"
             />
           </div>
-        </div>
-    <button className="button-one">Найти книгу</button>
-      </form>
-      
+
+          <div className="block-date">
+            <div className="date">
+              <label htmlFor="issue-date">
+                <span className="label-input">Выдача книги:</span>
+              </label>
+              <input
+                className="input-date"
+                id="issue-date"
+                type="date"
+                name="issueDate"
+              />
+            </div>
+            <div className="date">
+              <label htmlFor="return-date">
+                <span className="label-input">Возврат книги:</span>
+              </label>
+              <input
+                placeholder="выберите дату"
+                className="input-date"
+                id="return-date"
+                type="date"
+                name="returnDate"
+              />
+            </div>
+          </div>
+          <button className="button-one">Найти книгу</button>
+        </form>
+        <img src={StackBooks2} alt="" />
+      </div>
     </>
   );
 };

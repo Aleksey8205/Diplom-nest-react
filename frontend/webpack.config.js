@@ -43,13 +43,13 @@ module.exports = {
         use: ["@svgr/webpack"],
       },
       {
-        test: /\.(mp4|webm)$/,
+        test: /\.svg$/,
         use: [
           {
             loader: "file-loader",
             options: {
               name: "[name].[ext]",
-              outputPath: "videos/",
+              outputPath: "images/",
             },
           },
         ],
