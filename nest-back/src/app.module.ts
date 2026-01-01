@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './admin/users/users.module';
-import { LibraryModule } from './admin/library/library.module';
-// import { AuthModule } from './authentificate/auth.module';
+import { UsersModule } from './api/users/users.module';
+import { LibraryModule } from './api/library/library.module';
+import { AuthModule } from './api/authentificate/auth.module';
+import { BookModule } from './api/books/books.module';
+import { BookRentalModule } from './api/rentails/rentail.module';
 
 @Module({
   imports: [
@@ -17,9 +19,12 @@ import { LibraryModule } from './admin/library/library.module';
       logging: false,
       entities: ['dist/**/*.entity.js'],
     }),
-    // AuthModule,
+    AuthModule,
     UsersModule,
     LibraryModule,
+    BookModule,
+    BookRentalModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+}

@@ -10,7 +10,7 @@ import {
 import { LibraryService } from './library.service';
 import { LibraryEntity } from 'src/entities/library.entity';
 
-@Controller('api/admin/library')
+@Controller('api/library')
 export class LibraryController {
   constructor(private readonly libraryService: LibraryService) {}
 

@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { BooksEntity } from '../../entities/books.entity';
+import { UserEntity } from 'src/entities/user.entity';
+import { FindBooksParams } from './Interfaces/findBooks';
 
 @Injectable()
 export class BooksService {
   constructor(
     @InjectRepository(BooksEntity)
     private readonly booksRepository: Repository<BooksEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async createBook(data: {
@@ -43,4 +47,31 @@ export class BooksService {
   async deleteBook(id: number): Promise<void> {
     await this.booksRepository.delete(id)
   }
+
+  async findBook(params: FindBooksParams) {
+    let whereConditions = {};
+  
+    if (params.library) {
+      whereConditions['library.id'] = Number(params.library); 
+    }
+  
+    if (params.author) {
+      whereConditions['author'] = Like(`%${params.author}%`);
+    }
+  
+    if (params.title) {
+      whereConditions['title'] = Like(`%${params.title}%`);
+    }
+  
+    if (params.availableOnly) {
+      whereConditions['isAvailable'] = true;
+    }
+  
+    return await this.booksRepository.find({
+      where: whereConditions,
+      relations: ['library'], 
+    });
+  }
+
+
 }

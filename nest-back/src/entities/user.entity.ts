@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { BooksEntity } from './books.entity';
+import { BookRentalEntity } from './rental.entity';
 
 @Entity()
 export class UserEntity {
@@ -25,4 +27,10 @@ export class UserEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => BooksEntity, book => book.reservedBy)
+  reservedBooks: BooksEntity[];
+
+  @OneToMany(() => BookRentalEntity, rental => rental.user)
+  rentals: BookRentalEntity[];
 }

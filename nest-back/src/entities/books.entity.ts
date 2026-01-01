@@ -1,4 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany} from 'typeorm';
+import { LibraryEntity } from './library.entity';
+import { UserEntity } from './user.entity';
+import { BookRentalEntity } from './rental.entity';
 
 @Entity()
 export class BooksEntity {
@@ -31,4 +34,13 @@ export class BooksEntity {
 
     @Column({ default: 1 })
     availableCopies: number;
+
+    @ManyToOne(() => LibraryEntity, library => library.books)
+    library: LibraryEntity;
+
+    @ManyToOne(() => UserEntity, user => user.reservedBooks)
+    reservedBy: UserEntity;
+
+    @OneToMany(() => BookRentalEntity, (rental) => rental.book)
+    rentals: BookRentalEntity[];
 }

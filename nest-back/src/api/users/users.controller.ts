@@ -2,7 +2,7 @@ import { Controller, Post, Get, Param, Body, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserEntity } from '../../entities/user.entity';
 
-@Controller('api/admin/users')
+@Controller('api/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -19,7 +19,6 @@ export class UsersController {
 
   @Get('/')
   async findAll(@Query() query: any): Promise<UserEntity[]> {
-    console.log('Received query:', query); 
     return this.usersService.findAll(query); 
   } //обращение через http://localhost:3000/users?email=значение  http://localhost:3000/users?contactPhone=
 
