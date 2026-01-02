@@ -3,7 +3,7 @@ import { BooksEntity } from './books.entity';
 
 @Entity()
 export class LibraryEntity {
-    @PrimaryGeneratedColumn('increment')
+    @PrimaryGeneratedColumn('increment') // или uuid
     id: number;
 
     @Column()

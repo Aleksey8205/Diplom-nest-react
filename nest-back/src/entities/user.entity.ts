@@ -4,7 +4,7 @@ import { BookRentalEntity } from './rental.entity';
 
 @Entity()
 export class UserEntity {
-  @PrimaryGeneratedColumn('increment')
+  @PrimaryGeneratedColumn('increment')  // или uuid
   id: number;
 
   @Column({ unique: true })

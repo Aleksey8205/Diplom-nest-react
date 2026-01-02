@@ -67,3 +67,43 @@ const FormSearch = () => {
 };
 
 export default FormSearch;
+
+// const FormSearch = ({ onUpdateSearch }) => {
+//   const [inputValue, setInputValue] = useState("");
+
+//   const handleChange = (event) => {
+//     const newValue = event.target.value.trim(); // Удаляем пробелы
+//     setInputValue(newValue);
+//   };
+
+//   const handleSubmit = (event) => {
+//     event.preventDefault(); // Предотвращение стандартной отправки формы
+//     onUpdateSearch(inputValue); // Только после отправки формы отправляем запрос в родительский компонент
+//   };
+
+//   return (
+//     <div className="block-form">
+//       <form className="form-search" onSubmit={handleSubmit}>
+//         <div>
+//           <label htmlFor="title-input">
+//             <span className="label-input">Название:</span>
+//           </label>
+//           <input
+//             className="input"
+//             id="title-input"
+//             placeholder="Например, Евгений Онегин"
+//             type="text"
+//             name="bookTitle"
+//             onChange={handleChange}
+//           />
+//         </div>
+//         <button className="button-one" type="submit">
+//           Найти книгу
+//         </button>
+//       </form>
+//       <img src={StackBooks2} alt="" />
+//     </div>
+//   );
+// };
+
+// export default FormSearch;

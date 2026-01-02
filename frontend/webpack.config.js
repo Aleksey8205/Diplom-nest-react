@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   mode: "development",
@@ -12,6 +13,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./index.html",
     }),
+    new Dotenv(),
   ],
   module: {
     rules: [
@@ -36,11 +38,6 @@ module.exports = {
       {
         test: /\.(woff|woff2|ttf|otf|eot)$/i,
         type: "asset/resource",
-      },
-      {
-        test: /\.svg$/i,
-        issuer: /\.[jt]sx?$/,
-        use: ["@svgr/webpack"],
       },
       {
         test: /\.svg$/,

@@ -1,0 +1,15 @@
+.about {
+    box-sizing: border-box;
+    width: 100%;
+
+    height: 550px;
+    background-color: #F0FFF1;
+    border-radius: 32px;
+    margin-top: 160px;
+
+    border: 1px solid black;
+}
+
+.img-about {
+    width: 400px;
+}
