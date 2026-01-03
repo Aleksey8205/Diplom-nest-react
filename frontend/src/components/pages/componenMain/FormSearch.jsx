@@ -1,12 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import "./style/form.css";
 import StackBooks2 from "../../../public/stack-of-books-2.svg";
 
-const FormSearch = () => {
+const API_URL = process.env.API_URL;
+
+const FormSearch = ({ onStartSearch, onStopSearch }) => {
+  const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    onStartSearch(); 
+    setIsSearching(true);
+    try {
+      const response = await fetch(`${API_URL}/api/books?title=${title}&author=${author}&isAvailable=true`);
+      const results = await response.json();
+      setSearchResults(results);
+    } catch (error) {
+      console.error('Ошибка:', error);
+    } 
+  };
+
   return (
     <>
       <div className="block-form">
-        <form className="form-search">
+        <form className="form-search" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="title-input">
               <span className="label-input">Название:</span>
@@ -17,6 +37,8 @@ const FormSearch = () => {
               placeholder="Например, Евгений Онегин"
               type="text"
               name="bookTitle"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             />
           </div>
 
@@ -30,6 +52,8 @@ const FormSearch = () => {
               placeholder="Например, Пушкин А.С."
               type="text"
               name="authorName"
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
             />
           </div>
 
@@ -58,52 +82,32 @@ const FormSearch = () => {
               />
             </div>
           </div>
-          <button className="button-one">Найти книгу</button>
+          <button type="submit" className="button-one">Найти книгу</button>
         </form>
         <img src={StackBooks2} alt="" />
       </div>
+      {searchResults.length > 0 && (
+        <div className="search-results">
+          <h2>Найдено: {searchResults.length} книги</h2>
+          {searchResults.map((book, idx) => (
+            <div className="book-item" key={book.id}>
+              <div className="desc-book">
+                <img className="img-book" src={book.coverImage} alt={book.title} />
+                <div className="text-container"> 
+                  <h3>{book.title}</h3>
+                  <p className="text-books"><span className="gray-text">Автор:</span> {book.author}</p>
+                  <p className="text-books"><span className="gray-text">Год:</span> {book.year}</p>
+                  <p className="text-books"><span className="gray-text">Описание:</span><br />{book.description}</p>
+                  <p className="text-books"><span className="gray-text">Библиотека:</span><br />{book.library.name}</p>
+                </div>
+              </div>
+              <button className="button-one">Забронировать</button>
+            </div>
+          ))}
+        </div>
+      )}
     </>
   );
 };
 
 export default FormSearch;
-
-// const FormSearch = ({ onUpdateSearch }) => {
-//   const [inputValue, setInputValue] = useState("");
-
-//   const handleChange = (event) => {
-//     const newValue = event.target.value.trim(); // Удаляем пробелы
-//     setInputValue(newValue);
-//   };
-
-//   const handleSubmit = (event) => {
-//     event.preventDefault(); // Предотвращение стандартной отправки формы
-//     onUpdateSearch(inputValue); // Только после отправки формы отправляем запрос в родительский компонент
-//   };
-
-//   return (
-//     <div className="block-form">
-//       <form className="form-search" onSubmit={handleSubmit}>
-//         <div>
-//           <label htmlFor="title-input">
-//             <span className="label-input">Название:</span>
-//           </label>
-//           <input
-//             className="input"
-//             id="title-input"
-//             placeholder="Например, Евгений Онегин"
-//             type="text"
-//             name="bookTitle"
-//             onChange={handleChange}
-//           />
-//         </div>
-//         <button className="button-one" type="submit">
-//           Найти книгу
-//         </button>
-//       </form>
-//       <img src={StackBooks2} alt="" />
-//     </div>
-//   );
-// };
-
-// export default FormSearch;

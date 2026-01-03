@@ -1,0 +1,33 @@
+.footer {
+    margin-top: 200px;
+    background-color: #F0FFF1;
+
+    border: 1px solid black;
+
+    border-top-left-radius: 32px;
+    border-top-right-radius: 32px;
+}
+
+.footer-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    height: 347px;
+}
+
+.social-icons {
+    display: flex;
+    gap: 24px;
+}
+
+.link-social {
+    border: 1px solid black;
+    padding: 10px;
+    border-radius: 50%;
+    background: #6AA378;
+}
+
+.social-icon {
+    width: 45px;
+}
