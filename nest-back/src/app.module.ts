@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './api/users/users.module';
 import { LibraryModule } from './api/library/library.module';
-import { AuthModule } from './api/authentificate/auth.module';
 import { BookModule } from './api/books/books.module';
 import { BookRentalModule } from './api/rentails/rentail.module';
+import { GuardModule } from './guards/jwt.auth.guard.module';
+
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { BookRentalModule } from './api/rentails/rentail.module';
       logging: false,
       entities: ['dist/**/*.entity.js'],
     }),
-    AuthModule,
+    GuardModule,
     UsersModule,
     LibraryModule,
     BookModule,

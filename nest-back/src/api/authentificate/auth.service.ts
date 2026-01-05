@@ -1,17 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { UserEntity } from 'src/entities/user.entity';
-import  bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService, 
+  ) {}
 
   /**
-   * Валидирует пользователя по E-Mail и Паролю
+   * Валидирует пользователя по Email и паролю
    */
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.usersService.findByEmail(email);
+    
     if (!user) {
       return null;
     }
@@ -25,6 +30,13 @@ export class AuthService {
   }
 
   /**
+   * Генерация JWT токена
+   */
+  generateJWT(userId: number) {
+    return this.jwtService.sign({ id: userId });
+  }
+
+  /**
    * Регистрация нового пользователя
    */
   async registerUser(userData: { email: string, password: string, name: string, contactPhone: string }): Promise<UserEntity> {
@@ -34,7 +46,7 @@ export class AuthService {
       passwordHash: hashedPassword,
       name: userData.name,
       contactPhone: userData.contactPhone,
-      role: 'client', 
+      role: 'client',
     });
     return newUser;
   }
