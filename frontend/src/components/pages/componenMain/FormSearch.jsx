@@ -86,7 +86,8 @@ const FormSearch = ({ onStartSearch, onStopSearch }) => {
         </form>
         <img src={StackBooks2} alt="" />
       </div>
-      {searchResults.length > 0 && (
+      {isSearching && (
+      searchResults.length > 0 ? (
         <div className="search-results">
           <h2>Найдено: {searchResults.length} книги</h2>
           {searchResults.map((book, idx) => (
@@ -105,7 +106,12 @@ const FormSearch = ({ onStartSearch, onStopSearch }) => {
             </div>
           ))}
         </div>
-      )}
+      ) : (
+        <>
+        <h2>По вашему запросу ничего не найдено</h2>
+        <p>К сожалению, по указанным данным книга не найдена. Проверьте правильность написания или попробуйте изменить параметры поиска (автор, название, дата).</p>
+        </>
+      ))}
     </>
   );
 };

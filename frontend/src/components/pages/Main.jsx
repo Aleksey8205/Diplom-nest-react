@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Modal from "react-modal"
 import Header from "./componenMain/Header.jsx";
 import FormSearch from "./componenMain/FormSearch.jsx";
 import ActualBook from "./componenMain/ActualBook.jsx";
@@ -8,11 +9,11 @@ import Footer from "./componenMain/Footer.jsx";
 import MapLibrary from "./componenMain/MapLibrary.jsx";
 
 const Main = () => {
-    const [isSearching, setIsSearching] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
-    const startSearch = () => {
-      setIsSearching(true);
-    };
+  const startSearch = () => {
+    setIsSearching(true);
+  };
 
   return (
     <>
