@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Request, Response, UseGuards, SetMetadata } from '@nestjs/common';
+import { Controller, Post, Body, Request, Response, UseGuards, SetMetadata, Get} from "@nestjs/common";
 import { AuthService } from './auth.service';
 import { JwtGuard } from 'src/guards/jwt.guards';
 
@@ -58,10 +58,16 @@ export class AuthController {
   async register(@Body() body: { email: string, password: string, name: string, contactPhone: string }, @Response() res) {
     try {
       const user = await this.authService.registerUser(body);
-      return res.status(201).json({ message: 'Пользователь успешно зарегистрирован.', user });
+      return res.status(201).json({ message: 'Пользователь успешно зарегистрирован.'});
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: 'Ошибка сервера.' });
     }
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('check')
+  checkAuth() {
+    return { authenticated: true }; 
   }
 }

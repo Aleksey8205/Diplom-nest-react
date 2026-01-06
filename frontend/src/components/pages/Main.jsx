@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Modal from "react-modal"
 import Header from "./componenMain/Header.jsx";
 import FormSearch from "./componenMain/FormSearch.jsx";
 import ActualBook from "./componenMain/ActualBook.jsx";
