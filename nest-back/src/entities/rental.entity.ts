@@ -11,7 +11,7 @@ import { BooksEntity } from './books.entity';
 
 @Entity()
 export class BookRentalEntity {
-  @PrimaryGeneratedColumn('increment')  // или uuid
+  @PrimaryGeneratedColumn('increment')  
   id: number;
 
   @Column()

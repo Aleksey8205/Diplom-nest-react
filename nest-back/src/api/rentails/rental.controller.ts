@@ -3,7 +3,7 @@ import { BookRentalService } from './rental.service';
 import { BookRentalEntity } from 'src/entities/rental.entity';
 
 
-@Controller('rentals')
+@Controller('api/rentals')
 export class BookRentalController {
   constructor(private readonly bookRentalService: BookRentalService) {}
 

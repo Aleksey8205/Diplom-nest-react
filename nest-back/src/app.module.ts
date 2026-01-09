@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './api/users/users.module';
 import { LibraryModule } from './api/library/library.module';
 import { BookModule } from './api/books/books.module';
-import { BookRentalModule } from './api/rentails/rentail.module';
+import { BookRentalModule } from './api/rentails/rental.module';
 import { GuardModule } from './guards/jwt.auth.guard.module';
 
 
@@ -22,8 +22,8 @@ import { GuardModule } from './guards/jwt.auth.guard.module';
     }),
     GuardModule,
     UsersModule,
-    LibraryModule,
     BookModule,
+    LibraryModule,
     BookRentalModule,
   ],
 })

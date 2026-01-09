@@ -12,6 +12,7 @@ function App() {
           <Route path="/" element={<Main/>} />
           <Route path="/me" element={<PersonalPage />} />
         </Routes>
+        
       </Router>
   );
 }

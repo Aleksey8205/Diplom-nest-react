@@ -1,15 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { Repository, Like, In } from 'typeorm';
+
 import { BooksEntity } from '../../entities/books.entity';
 import { UserEntity } from 'src/entities/user.entity';
+import { LibraryEntity } from 'src/entities/library.entity';
+
 import { FindBooksParams } from './Interfaces/findBooks';
+
+
 
 @Injectable()
 export class BooksService {
   constructor(
     @InjectRepository(BooksEntity)
     private readonly booksRepository: Repository<BooksEntity>,
+    @InjectRepository(LibraryEntity)
+    private readonly libraryRepository: Repository<LibraryEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
@@ -73,5 +80,9 @@ export class BooksService {
     });
   }
 
-
+  async findBookById(id: number): Promise<{ book: BooksEntity, libraries: LibraryEntity[] }> {
+    const book = await this.booksRepository.findOneByOrFail({ id });
+    const libraries = await this.libraryRepository.find()
+    return { book, libraries };
+  }
 }

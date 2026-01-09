@@ -6,14 +6,13 @@ body {
 
     justify-self: center;
     height: 100vh;
-    margin-top: 30px;
-
 }
 
 .container {
     width: 1200px;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 30px;
 }
 
 p {

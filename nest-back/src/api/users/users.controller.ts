@@ -7,7 +7,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post()
-  async create(@Body() data: Partial<UserEntity>) {
+  async create(@Body() data:{ email: string, password: string, name: string, contactPhone: string, role: 'client' | 'admin' | 'manager' }) {
     return await this.usersService.create(data);
   }//рабочий
 

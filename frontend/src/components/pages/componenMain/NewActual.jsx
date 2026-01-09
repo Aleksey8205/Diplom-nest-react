@@ -4,7 +4,7 @@ import "./style/actual.css";
 
 const API_URL = process.env.API_URL;
 
-const NewActual = () => {
+const NewActual = ({ onStartBooking }) => {
   const [books, setBooks] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -31,6 +31,11 @@ const NewActual = () => {
     return <div>Нет книг</div>;
   }
 
+  const rental = (bookId) => {
+    onStartBooking(bookId)
+  };
+
+
   return (
     <>
       <h2>Новые поступления</h2>
@@ -48,7 +53,7 @@ const NewActual = () => {
                   <p className="text-books"><span className="gray-text">Библиотека:</span><br />{book.library.name}</p>
                 </div>
               </div>
-              <button className="button-one">Забронировать</button>
+              <button onClick={() => rental(book.id)} className="button-one">Забронировать</button>
             </div>
           ))}
         </div>

@@ -10,15 +10,17 @@ async function bootstrap() {
   app.use((req, res, next) => new LoggingMiddleware().use(req, res, next));
   app.use(cookieParser());
 
-  app.enableCors(
-    {
-    origin: 'http://localhost:8080', 
-    credentials: true,              
+  app.enableCors({
+    origin: [
+      'http://localhost:8081',
+      'http://localhost:8082',
+      'http://localhost:8080',
+    ],
+    credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
     exposedHeaders: ['Set-Cookie'],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  }
-  );
+  });
   app.use('/uploads', express.static('dist/config/uploads'));
   await app.listen(process.env.PORT ?? 3000);
 }

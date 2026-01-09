@@ -1,12 +1,19 @@
-import { Controller, Post, Body, Request, Response, UseGuards, SetMetadata, Get} from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Body,
+  Request,
+  Response,
+  UseGuards,
+  SetMetadata,
+  Get,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtGuard } from 'src/guards/jwt.guards';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-  ) { }
+  constructor(private readonly authService: AuthService) {}
 
   /**
    * Роутер входа (Login)
@@ -14,7 +21,10 @@ export class AuthController {
   @Post('login')
   async login(@Request() req, @Response() res, @Body() credentials) {
     try {
-      const user = await this.authService.validateUser(credentials.email, credentials.password);
+      const user = await this.authService.validateUser(
+        credentials.email,
+        credentials.password,
+      );
 
       if (!user) {
         return res.status(401).json({ message: 'Неверные учетные данные.' });
@@ -38,7 +48,7 @@ export class AuthController {
 
   /**
    * Роутер выхода (Logout)
-  */
+   */
   //для применения ролей JwtGuard, RolesGuard декоратор @Roles(admin/и тд)
   // @UseGuards(JwtGuard, RolesGuard)
   // @Roles('client') только так иначе никак
@@ -46,7 +56,6 @@ export class AuthController {
   @UseGuards(JwtGuard)
   @Post('logout')
   logout(@Response() res) {
-
     res.clearCookie('auth_token');
     res.sendStatus(200);
   }
@@ -55,10 +64,21 @@ export class AuthController {
    * Роутер регистрации (Register)
    */
   @Post('register')
-  async register(@Body() body: { email: string, password: string, name: string, contactPhone: string }, @Response() res) {
+  async register(
+    @Body()
+    body: {
+      email: string;
+      password: string;
+      name: string;
+      contactPhone: string;
+    },
+    @Response() res,
+  ) {
     try {
       const user = await this.authService.registerUser(body);
-      return res.status(201).json({ message: 'Пользователь успешно зарегистрирован.'});
+      return res
+        .status(201)
+        .json({ message: 'Пользователь успешно зарегистрирован.' });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: 'Ошибка сервера.' });
@@ -68,6 +88,23 @@ export class AuthController {
   @UseGuards(JwtGuard)
   @Get('check')
   checkAuth() {
-    return { authenticated: true }; 
+    return { authenticated: true };
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('user-info')
+  async checkUser(@Request() req, @Response() res) {
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({ message: 'Not authorized' });
+    }
+
+    return res.json({
+      name: user.name,
+      phone: user.contactPhone,
+      email: user.email,
+      role: user.role,
+    });
   }
 }

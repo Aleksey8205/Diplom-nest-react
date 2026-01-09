@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import "./style/form.css";
 import StackBooks2 from "../../../public/stack-of-books-2.svg";
+import BooksEarth from "../../../public/books-2.svg"
 
 const API_URL = process.env.API_URL;
 
-const FormSearch = ({ onStartSearch, onStopSearch }) => {
+const FormSearch = ({ onStartSearch, onStartBooking}) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [booking, setIsBooking] = useState(false);
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -21,6 +24,10 @@ const FormSearch = ({ onStartSearch, onStopSearch }) => {
     } catch (error) {
       console.error('Ошибка:', error);
     } 
+  };
+
+  const rental = (bookId) => {
+    onStartBooking(bookId)
   };
 
   return (
@@ -84,14 +91,20 @@ const FormSearch = ({ onStartSearch, onStopSearch }) => {
           </div>
           <button type="submit" className="button-one">Найти книгу</button>
         </form>
-        <img src={StackBooks2} alt="" />
+        {!isSearching ? (
+          <img src={StackBooks2} alt="" />
+        ): (
+          <img src={BooksEarth} alt="" />
+        )}
+        
       </div>
       {isSearching && (
       searchResults.length > 0 ? (
         <div className="search-results">
           <h2>Найдено: {searchResults.length} книги</h2>
+          <div className="book-list">
           {searchResults.map((book, idx) => (
-            <div className="book-item" key={book.id}>
+            <div className="books book-item" key={book.id}>
               <div className="desc-book">
                 <img className="img-book" src={book.coverImage} alt={book.title} />
                 <div className="text-container"> 
@@ -102,9 +115,10 @@ const FormSearch = ({ onStartSearch, onStopSearch }) => {
                   <p className="text-books"><span className="gray-text">Библиотека:</span><br />{book.library.name}</p>
                 </div>
               </div>
-              <button className="button-one">Забронировать</button>
+              <button onClick={() => rental(book.id)} className="button-one">Забронировать</button>
             </div>
           ))}
+          </div>
         </div>
       ) : (
         <>

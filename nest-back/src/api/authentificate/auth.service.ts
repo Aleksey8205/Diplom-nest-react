@@ -21,7 +21,7 @@ export class AuthService {
       return null;
     }
 
-    const isPasswordMatch = await bcrypt.compare(password, user.passwordHash);
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
       return null;
     }
@@ -43,11 +43,24 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     const newUser = await this.usersService.create({
       email: userData.email,
-      passwordHash: hashedPassword,
+      password: hashedPassword,
       name: userData.name,
       contactPhone: userData.contactPhone,
       role: 'client',
     });
     return newUser;
+  }
+
+  async checkUser(token: string): Promise<UserEntity | null> {
+    try {
+      const decoded = this.jwtService.verify(token);
+      const user = await this.usersService.findById(decoded.id);
+      if (!user) {
+        return null;
+      }
+      return user;
+    } catch (error) {
+      return null;
+    }
   }
 }

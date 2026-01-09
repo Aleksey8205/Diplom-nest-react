@@ -26,8 +26,8 @@ const LoginModal = ({ isOpen, onClose, onRegister }) => {
             .then(response => response.json())
             .then(result => {
               console.log(result)
-                onClose()
-               navigate("/me")
+              onClose()
+              navigate("/me")
             })
             .catch(error => {
                 console.error('Error:', error);

@@ -3,6 +3,7 @@ import { Repository, Like } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../../entities/user.entity';
 import { SearchUserParams, IUserService } from './interfaces/search-user-params';
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService implements IUserService {
@@ -11,9 +12,18 @@ export class UsersService implements IUserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async create(data: Partial<UserEntity>): Promise<UserEntity> {
-    const newUser = this.userRepository.create(data);
-    return await this.userRepository.save(newUser);
+  async create(data: { email: string, password: string, name: string, contactPhone: string, role: 'client' | 'admin' | 'manager' }): Promise<UserEntity> {
+
+      const hashedPassword = await bcrypt.hash(data.password, 10);
+      const newUser = this.userRepository.create({
+        email: data.email,
+        password: hashedPassword,
+        name: data.name,
+        contactPhone: data.contactPhone,
+        role: data.role, 
+      });
+      
+      return await this.userRepository.save(newUser);
   }
 
   async findById(id: number): Promise<UserEntity> {
