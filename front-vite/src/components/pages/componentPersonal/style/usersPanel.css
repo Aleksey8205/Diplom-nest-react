@@ -1,3 +1,9 @@
+.head-panel {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
 .item-box {
     border: 1px solid black;
     border-radius: 16px;

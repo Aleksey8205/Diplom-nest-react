@@ -26,7 +26,7 @@ const UsersComponent = () => {
   return (
     <>
       <section>
-        <div className="flex">
+        <div className="head-panel">
           <h2 className="hello-panel">Пользователи</h2>
           {user && user.role === "admin" && (
             <button className="button-one">Добавить пользователя</button>
