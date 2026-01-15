@@ -37,10 +37,7 @@ export class BooksEntity {
 
     @ManyToOne(() => LibraryEntity, library => library.books)
     library: LibraryEntity;
-
-    @ManyToOne(() => UserEntity, user => user.reservedBooks)
-    reservedBy: UserEntity;
-
+    
     @OneToMany(() => BookRentalEntity, (rental) => rental.book)
     rentals: BookRentalEntity[];
 }

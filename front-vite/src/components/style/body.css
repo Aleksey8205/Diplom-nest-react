@@ -1,0 +1,119 @@
+@font-face {
+    font-family: Montserrat-bold;
+    src: url("../../public/font/Montserrat-Bold.ttf");
+}
+
+@font-face {
+    font-family: Montserrat-semiBold;
+    src: url("../../public/font/Montserrat-SemiBold.ttf");
+}
+
+@font-face {
+    font-family: Monsterrat-regular;
+    src: url('../../public/font/Montserrat-Regular.ttf');
+}
+
+body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #F6FFF7;
+
+    justify-self: center;
+    height: 100vh;
+}
+
+.container {
+    width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+button {
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+p {
+    font-size: 1rem;
+    font-family: Monsterrat-regular;
+    margin: 0;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+
+h1,
+h2,
+h3 {
+    font-family: Montserrat-semiBold;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    font-size: 16px;
+    font-family: Montserrat-semiBold;
+    cursor: pointer;
+    margin-top: 16px;
+    margin-bottom: 16px;
+
+}
+
+.button-one {
+    box-sizing: border-box;
+    padding: 16px 24px;
+    gap: 10px;
+
+    font-size: 16px;
+    font-family: Montserrat-semiBold;
+    font-weight: 600;
+
+    background: #FFC33E;
+    border: 1px solid #000000;
+    box-shadow: 4px 4px 0px #000000;
+    border-radius: 16px;
+
+    transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    display: block; 
+    margin-left: auto; 
+    margin-right: auto;
+}
+
+.button-one:hover {
+    box-shadow: none;
+}
+
+.button-one:active {
+    background-color: #F49425;
+}
+
+
+.button-two {
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 600;
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    width: 186px;
+    padding: 16px 24px;
+    background-color: #6AA378;
+    border: 1px solid #000000;
+    box-shadow: 4px 4px 0px #000000;
+    border-radius: 16px;
+    transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+
+.button-two:hover {
+    box-shadow: none;
+}
+
+
+.button-two:active {
+    background-color: #23685B;
+}

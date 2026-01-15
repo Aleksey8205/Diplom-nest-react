@@ -1,0 +1,43 @@
+.panel {
+    display: flex;
+}
+
+.aside {
+    box-sizing: border-box;
+    width: 330px;
+    height: 100vh;
+    padding: 32px;
+    border: 1px solid black;
+    border-radius: 32px;
+    background-color: #D6EAD8;
+
+    margin-right: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.nav-profile {
+    display: flex;
+    flex-direction: column;
+}
+
+.items-nav {
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.logout {
+    display: flex;
+    flex-direction: column;
+}
+
+.active-link {
+    color: #F49425;
+}

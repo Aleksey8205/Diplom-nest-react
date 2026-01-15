@@ -28,9 +28,6 @@ export class UserEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => BooksEntity, book => book.reservedBy)
-  reservedBooks: BooksEntity[];
-
   @OneToMany(() => BookRentalEntity, rental => rental.user)
   rentals: BookRentalEntity[];
 }

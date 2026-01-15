@@ -39,7 +39,14 @@ export class AuthController {
         maxAge: 3600000,
       });
 
-      return res.json({ message: 'Авторизация успешна.' });
+      const userData = {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      };
+
+      return res.json({userData, message: 'Авторизация успешна.' });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: 'Ошибка сервера.' });
@@ -81,14 +88,8 @@ export class AuthController {
         .json({ message: 'Пользователь успешно зарегистрирован.' });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ error: 'Ошибка сервера.' });
+      return res.status(400).json({ message: 'Email уже используется' });
     }
-  }
-
-  @UseGuards(JwtGuard)
-  @Get('check')
-  checkAuth() {
-    return { authenticated: true };
   }
 
   @UseGuards(JwtGuard)
@@ -101,6 +102,7 @@ export class AuthController {
     }
 
     return res.json({
+      id: user.id,
       name: user.name,
       phone: user.contactPhone,
       email: user.email,

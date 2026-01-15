@@ -32,7 +32,7 @@ export class BookController {
     const file = req.file;
 
     if (file) {
-      data.coverImage = `http://localhost:3000/uploads/${file.filename}`; // потом сменить
+      data.coverImage = `http://localhost:3000/uploads/${file.filename}`; 
     }
     return await this.bookService.createBook(data);
   }
@@ -49,7 +49,7 @@ export class BookController {
     const file = req.file;
 
     if (file) {
-      data.coverImage = `http://localhost:3000/uploads/${file.filename}`; // потом сменить
+      data.coverImage = `http://localhost:3000/uploads/${file.filename}`; 
     }
 
     return this.bookService.updateBook(id, data);

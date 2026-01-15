@@ -40,10 +40,9 @@ export class AuthService {
    * Регистрация нового пользователя
    */
   async registerUser(userData: { email: string, password: string, name: string, contactPhone: string }): Promise<UserEntity> {
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
     const newUser = await this.usersService.create({
       email: userData.email,
-      password: hashedPassword,
+      password: userData.password,
       name: userData.name,
       contactPhone: userData.contactPhone,
       role: 'client',
