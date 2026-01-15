@@ -1,0 +1,33 @@
+.item-box {
+    border: 1px solid black;
+    border-radius: 16px;
+    background-color: #D6EAD8;
+
+
+}
+
+.info_user_panel {
+    display: grid;
+    grid-template-columns: repeat(1, 40px) 280px 210px 170px 65px 100px;
+    padding: 20px;
+
+
+    text-align: center;
+}
+
+
+.user-item {
+    display: grid;
+    grid-template-columns: repeat(1, 40px) 280px 210px 170px 65px 100px;
+    border-bottom: 1px solid gray;
+    text-align: center;
+    padding-left: 20px;
+}
+
+.user-item:nth-last-child(1) {
+    border-bottom: none;
+}
+
+.user-item:nth-child(2n) {
+    background-color: #F0FFF1;
+}
