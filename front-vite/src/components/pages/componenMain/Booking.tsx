@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import type { Book, IBooking, Library } from "./interface/interface";
 import "./style/booking.css";
 import { BookCheck, CalendarIcon } from "lucide-react";
@@ -106,6 +106,10 @@ const Booking = ({ bookItem }: IBooking) => {
     }
   };
 
+  const handleGoToBooks = () => {
+    navigate('/me', { state: { tab: 'books' } });
+  };
+
   return (
     <>
       {showForm ? (
@@ -141,10 +145,12 @@ const Booking = ({ bookItem }: IBooking) => {
                 бронь автоматически снимется
               </p>
               <div className="flex">
-                <Link to="/" className="button-one">
+                <button className="button-one">
                   Найди другую книгу
-                </Link>
-                <button className="button-two">Мои бронирования</button>
+                </button>
+                <button
+                onClick={handleGoToBooks}
+                className="button-two">Мои бронирования</button>
               </div>
             </div>
           </div>
@@ -182,7 +188,7 @@ const Booking = ({ bookItem }: IBooking) => {
               <h2>Выберите библиотеку</h2>
               <div className="booking-libaries">
                 {libraries.length > 0 ? (
-                  libraries.map((library, idx) => (
+                  libraries.map((library) => (
                     <div
 
                       className={`booking-library ${

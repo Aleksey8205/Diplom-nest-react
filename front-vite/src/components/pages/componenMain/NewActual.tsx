@@ -42,7 +42,7 @@ const NewActual = ({ onStartBooking }: IStartBooking) => {
       <div className="book-container">
         <div
           className="book-items-wrapper"
-          style={{ transform: `translateX(-${activeIndex * 0}%)` }}
+          style={{ transform: `translateX(-${activeIndex * 40}%)` }}
         >
           {Array.isArray(books) &&
             books.map((book: Book, idx) => (

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "../componentPersonal/style/aside.css";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 import { logout } from "../../../utils/authSlice";
 import { TabEnum } from "./interface/interface";
 import { useDispatch } from "react-redux";
@@ -20,7 +21,8 @@ const Aside = () => {
   const user = useUser();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [selectedTab, setSelectedTab] = useState<TabEnum>(TabEnum.MAIN);
+  const location = useLocation();
+  const [selectedTab, setSelectedTab] = useState<TabEnum>(location.state?.tab || TabEnum.MAIN);
 
   const firstName = user ? user.name.split(" ")[1] : "";
 
