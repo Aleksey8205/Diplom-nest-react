@@ -1,5 +1,6 @@
 // import  { useEffect, useState } from "react";
-import "../style/mainPAnel.css"
+import "../style/mainPAnel.css";
+import { Link } from "react-router-dom";
 
 // const API_URL = import.meta.env.VITE_API_URL ?? "";
 
@@ -13,8 +14,10 @@ const MainClient = () => {
             <p>Вы забронировали книг</p>
             <p>сейчас у вас активных бронирования</p>
             <div className="flex">
-                <button className="button-one">Перейти к броням</button>
-                <button className="button-two">Найти книгу</button>
+              <button className="button-one">Перейти к броням</button>
+              <Link className="button-two" to="/">
+                Найти книгу
+              </Link>
             </div>
           </div>
         </div>

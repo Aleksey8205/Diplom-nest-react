@@ -7,6 +7,10 @@ import { BookRentalEntity } from 'src/entities/rental.entity';
 export class BookRentalController {
   constructor(private readonly bookRentalService: BookRentalService) {}
 
+  @Get()
+  async findAll(): Promise<BookRentalEntity[]> {
+    return this.bookRentalService.findAll()
+  }
 
   @Post()
   async createRental(@Body() data: any): Promise<BookRentalEntity> {

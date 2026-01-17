@@ -1,3 +1,7 @@
+.book_booking {
+    justify-items: center;
+}
+
 .booking-libaries {
     display: flex;
     gap: 32px;
@@ -8,7 +12,7 @@
 .booking-library {
     box-sizing: border-box;
     width: 400px;
-    background: #F0FFF1;
+    background: #FFFEF0;
     border: 1px solid black;
     border-radius: 32px;
 
@@ -17,7 +21,13 @@
     display: flex;
     justify-content: space-between;
     align-items: start;
+    cursor: pointer;
 }
+
+.active-library {
+    background-color: #F0FFF1;
+}
+
 
 .library_title__address {
     width: 290px;
@@ -32,4 +42,11 @@
     font-size: 16px;
     font-family:  Montserrat-semiBold;
     font-weight: 600;
+}
+
+.rental-item {
+    border: 1px solid black;
+    background-color: #D6EAD8;
+    border-radius: 32px;
+    padding: 32px;
 }

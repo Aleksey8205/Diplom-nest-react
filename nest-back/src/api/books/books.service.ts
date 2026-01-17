@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, In } from 'typeorm';
 
 import { BooksEntity } from '../../entities/books.entity';
-import { UserEntity } from 'src/entities/user.entity';
 import { LibraryEntity } from 'src/entities/library.entity';
 
 import { FindBooksParams } from './Interfaces/findBooks';
@@ -17,8 +16,6 @@ export class BooksService {
     private readonly booksRepository: Repository<BooksEntity>,
     @InjectRepository(LibraryEntity)
     private readonly libraryRepository: Repository<LibraryEntity>,
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async createBook(data: {

@@ -6,8 +6,6 @@ import type { Book, IStartBooking, IStartSearch} from "./interface/interface";
 
 const API_URL = import.meta.env.VITE_API_URL ?? '';
 
-
-
 const FormSearch = ({ onStartSearch, onStartBooking }: IStartSearch & IStartBooking ) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');

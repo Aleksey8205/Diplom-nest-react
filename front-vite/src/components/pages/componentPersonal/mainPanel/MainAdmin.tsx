@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import "../style/mainPAnel.css"
 
 const API_URL = import.meta.env.VITE_API_URL ?? "";
@@ -20,16 +21,17 @@ const MainAdmin = () => {
       .then((data) => setUsers(data))
       .catch((error) => console.log(error));
 
-    // fetch(`${API_URL}/api/rentals`)
-    //   .then((response) => response.json())
-    //   .then((data) => setRentals(data))
-    //   .catch((error) => console.log(error));
+    fetch(`${API_URL}/api/rentals`)
+      .then((response) => response.json())
+      .then((data) => setRental(data))
+      .catch((error) => console.log(error));
 
     fetch(`${API_URL}/api/books`)
       .then((response) => response.json())
       .then((data) => setBooks(data))
       .catch((error) => console.log(error));
   }, []);
+
 
   const libraryLength = library.length;
   const booksLength = books.length;

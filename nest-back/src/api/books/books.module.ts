@@ -17,8 +17,10 @@ import { ValidationPipe } from './validation/validation.pipe';
     controllers: [BookController],
     providers: [
         BooksService,
+        
         // { provide: APP_PIPE, useClass: ValidationPipe }
-    ]
+    ],
+    exports: [BooksService, TypeOrmModule.forFeature([BooksEntity])]
 })
 
 export class BookModule {}

@@ -42,7 +42,7 @@ const LoginModal = ({ isOpen, onClose, onRegister }: ILoginModalProps) => {
       }
 
       const result = await response.json();
-      dispatch(loginSuccess(result.user)); 
+      dispatch(loginSuccess(result.userData)); 
       onClose();
       navigate('/me');
     } catch (error) {

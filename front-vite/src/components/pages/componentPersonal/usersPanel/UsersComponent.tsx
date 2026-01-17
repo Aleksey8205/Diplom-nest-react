@@ -50,7 +50,7 @@ const UsersComponent = () => {
               <p>Чат</p>     
             </div>    
           {users.map((users: UserMap, idx) => (
-            <div className="user-item">
+            <div key={idx} className="user-item">
             <p>{users.id}</p>
             <p>{users.name}</p>
             </div>

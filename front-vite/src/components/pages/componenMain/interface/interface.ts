@@ -1,4 +1,4 @@
-export interface IStartBooking{
+export interface IStartBooking {
   onStartBooking: (book: Book) => void;
 }
 
@@ -15,8 +15,9 @@ export interface Library {
   name: string;
   address: string;
   description: string;
+  availableCopies: number;
+  totalCopies: number;
 }
-
 
 export interface Book {
   id: number;
@@ -30,7 +31,6 @@ export interface Book {
   totalCopies: number;
   availableCopies: number;
   libraries: number[];
-  library: Library; 
+  library: Library;
   librariesCount: number;
 }
-
