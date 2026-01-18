@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { Rental } from "./interface";
 
 import "../style/mainPAnel.css"
 
@@ -8,7 +9,7 @@ const MainAdmin = () => {
   const [library, setLibrary] = useState([]);
   const [users, setUsers] = useState([]);
   const [books, setBooks] = useState([]);
-  const [rental, setRental] = useState([])
+  const [rental, setRental] = useState<Rental[]>([])
 
   useEffect(() => {
     fetch(`${API_URL}/api/library`)
@@ -32,11 +33,18 @@ const MainAdmin = () => {
       .catch((error) => console.log(error));
   }, []);
 
+  const userIds = rental.map(rental => rental.userId);
+
+  const uniqueUserIds = Array.from(new Set(userIds));
+  
+
+  
 
   const libraryLength = library.length;
   const booksLength = books.length;
   const usersLength = users.length;
   const usersRental = rental.length;
+  const uniqueUsersCount = uniqueUserIds.length;
 
   return (
     <>
@@ -56,8 +64,8 @@ const MainAdmin = () => {
           </div>
           <div className="info-item">
             <p>Всего пользователей: {usersLength}</p>
-            <p>С активными бронированиями </p>
-            <p>Новых сообщений     </p>
+            <p>С активными бронированиями: {uniqueUsersCount}</p>
+            <p>Новых сообщений:     </p>
             <button className="button-one">Открыть список</button>
           </div>
         </div>

@@ -43,7 +43,7 @@ const Aside = () => {
       .then((data) => {
         dispatch(logout());
         navigate("/");
-        console.log("Logout successful:", data);
+        console.log("Logout successful");
       })
       .catch((error) => {
         console.error("Logout error:", error);

@@ -35,14 +35,14 @@ const Booking = ({ bookItem }: IBooking) => {
             new Set(data.map((b: Book) => b.library.id))
           ).map((libraryId) => {
             const relatedBook = data.find((b) => b.library.id === libraryId);
-  
+
             return {
-              ...relatedBook!.library, 
-              availableCopies: relatedBook!.availableCopies, 
-              totalCopies: relatedBook!.totalCopies, 
+              ...relatedBook!.library,
+              availableCopies: relatedBook!.availableCopies,
+              totalCopies: relatedBook!.totalCopies,
             };
           });
-  
+
           setLibraries(uniqueLibraries);
         })
         .catch((err) => console.error(err));
@@ -107,7 +107,7 @@ const Booking = ({ bookItem }: IBooking) => {
   };
 
   const handleGoToBooks = () => {
-    navigate('/me', { state: { tab: 'books' } });
+    navigate("/me", { state: { tab: "books" } });
   };
 
   return (
@@ -145,12 +145,10 @@ const Booking = ({ bookItem }: IBooking) => {
                 бронь автоматически снимется
               </p>
               <div className="flex">
-                <button className="button-one">
-                  Найди другую книгу
+                <button className="button-one">Найди другую книгу</button>
+                <button onClick={handleGoToBooks} className="button-two">
+                  Мои бронирования
                 </button>
-                <button
-                onClick={handleGoToBooks}
-                className="button-two">Мои бронирования</button>
               </div>
             </div>
           </div>
@@ -190,12 +188,12 @@ const Booking = ({ bookItem }: IBooking) => {
                 {libraries.length > 0 ? (
                   libraries.map((library) => (
                     <div
-
                       className={`booking-library ${
-                        selectedLibrary?.id === library.id && "active-library"
-                      }`}
+                        selectedLibrary?.id === library.id && "active-library"} 
+                      ${library.availableCopies === 0 && "disable"}`}
                       key={library.id}
                       onClick={() => handleSelectLibrary(library)}
+                      
                     >
                       <div className="library_title__address">
                         <p className="library-title">{library.name}</p>
@@ -204,7 +202,7 @@ const Booking = ({ bookItem }: IBooking) => {
                       <div className="book-check">
                         <BookCheck />
                         <p>
-                        {library.availableCopies}/{library.totalCopies}
+                          {library.availableCopies}/{library.totalCopies}
                         </p>
                       </div>
                     </div>
