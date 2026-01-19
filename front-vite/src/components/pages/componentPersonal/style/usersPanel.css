@@ -26,8 +26,9 @@
     display: grid;
     grid-template-columns: repeat(1, 40px) 280px 210px 170px 65px 100px;
     border-bottom: 1px solid gray;
-    text-align: center;
     padding-left: 20px;
+    text-align: center;
+    align-items: center;
 }
 
 .user-item:nth-last-child(1) {
@@ -36,4 +37,8 @@
 
 .user-item:nth-child(2n) {
     background-color: #F0FFF1;
+}
+
+.user-information {
+ text-align: left;
 }

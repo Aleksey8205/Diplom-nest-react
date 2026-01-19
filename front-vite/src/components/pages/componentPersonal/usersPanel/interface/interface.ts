@@ -6,3 +6,10 @@ export interface UserMap {
     rental: string;
     role: string;
 }
+
+export interface LibraryMap {
+    id: number;
+    address: string;
+    name: string;
+    description: string;
+}

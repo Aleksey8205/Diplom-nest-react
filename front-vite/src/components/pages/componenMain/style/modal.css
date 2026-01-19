@@ -54,3 +54,48 @@
 .authorized {
   text-align: center;
 }
+
+.radio-input {
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+  width: 0;
+  height: 0;
+}
+
+/* Оформляем метку, которая замещает радиокнопку */
+.radio-label {
+  display: block;
+  position: relative;
+  padding-left: 50px;
+  transition: color 0.2s ease;
+}
+
+/* Псевдоэлемент для обозначения круга радиокнопки */
+.radio-label::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+
+  outline: 1px solid #030303;
+  outline-offset: 10px;
+}
+
+/* Выбранная радиокнопка выделяется голубым кругом */
+.radio-input:checked ~ .radio-label::before {
+  background-color: #6AA378;
+  width: 12px;
+  height: 12px;
+  border: 1px solid black;
+}
+
+
+/* Контроль фокусировки */
+.radio-input:focus ~ .radio-label::before {
+
+}

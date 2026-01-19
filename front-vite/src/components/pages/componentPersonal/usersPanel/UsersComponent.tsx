@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { useUser } from "../interface/UserContext.ts";
 import type { UserMap } from "./interface/interface.ts";
-import "../style/usersPanel.css"
+import "../style/usersPanel.css";
+import UserCreate from "../modal/CreateUserModal.tsx";
+import { BookOpen, ContactRound, MessageSquare, UserRound } from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "";
 
 const UsersComponent = () => {
   const user = useUser();
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<UserMap[]>([]);
   const [searchParam, setSearchParam] = useState("");
+  const [createModal, setCreateModal] = useState(false);
 
   useEffect(() => {
     fetch(`${API_URL}/api/users`)
@@ -29,8 +32,14 @@ const UsersComponent = () => {
         <div className="head-panel">
           <h2 className="hello-panel">Пользователи</h2>
           {user && user.role === "admin" && (
-            <button className="button-one">Добавить пользователя</button>
+            <button className="button-one" onClick={() => setCreateModal(true)}>
+              Добавить пользователя
+            </button>
           )}
+          <UserCreate
+            isOpen={createModal}
+            onClose={() => setCreateModal(false)}
+          />
         </div>
         <form onSubmit={handleSubmit}>
           <input
@@ -42,20 +51,42 @@ const UsersComponent = () => {
 
         <div className="item-box">
           <div className="info_user_panel">
-              <p>ID</p>
-              <p>ФИО/Контакты</p>
-              <p>Последняя активность</p>
-              <p>Активные брони</p>
-              <p>Роль</p>
-              <p>Чат</p>     
-            </div>    
-          {users.map((users: UserMap, idx) => (
+            <p className="gray-text">ID</p>
+            <p className="gray-text" style={{textAlign: "left"}}>ФИО/Контакты</p>
+
+            <p className="gray-text">Последняя активность</p>
+            <p className="gray-text">Активные брони</p>
+            <p className="gray-text">Роль</p>
+            <p className="gray-text">Чат</p>
+          </div>
+          {users.map((user: UserMap, idx) => (
             <div key={idx} className="user-item">
-            <p>{users.id}</p>
-            <p>{users.name}</p>
+              <p>{user.id}</p>
+              <div className="user-information">
+                <p>{user.name}</p>
+                <p className="gray-text">{user.contactPhone}</p>
+                <p className="gray-text">{user.email}</p>
+              </div>
+              <p>актив</p>
+              <p>бронь</p>
+              {user.role === "client" ? (
+                <p>
+                  <UserRound />
+                </p>
+              ) : user.role === "manager" ? (
+                <p>
+                  <BookOpen />
+                </p>
+              ) : user.role === "admin" ? (
+                <p>
+                  <ContactRound />
+                </p>
+              ) : null}
+              <p>
+                <MessageSquare />
+              </p>
             </div>
           ))}
-          
         </div>
       </section>
     </>

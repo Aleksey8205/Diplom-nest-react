@@ -1,6 +1,5 @@
 import { useState } from "react";
 import ReactModal from "react-modal";
-import { useDispatch } from 'react-redux';
 import { X } from "lucide-react";
 
 ReactModal.setAppElement("#root");
@@ -13,7 +12,6 @@ interface IRegisterModalProps {
 }
 
 const RegisterModal = ({ isOpen, onClose }: IRegisterModalProps) => {
-  const dispatch = useDispatch();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
