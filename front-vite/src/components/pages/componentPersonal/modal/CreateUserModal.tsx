@@ -3,14 +3,14 @@ import ReactModal from "react-modal";
 import "../../componenMain/style/modal.css";
 import { X } from "lucide-react";
 
-interface IUserModalProps {
+interface IModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
 const API_URL = import.meta.env.VITE_API_URL ?? '';
 
-const UserCreate = ({ isOpen, onClose }: IUserModalProps) => {
+const UserCreate = ({ isOpen, onClose }: IModalProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

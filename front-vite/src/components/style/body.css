@@ -115,3 +115,15 @@ a {
 .button-two:active {
     background-color: #23685B;
 }
+
+input {
+    font-family: Monsterrat-regular;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.textarea {
+    font-family: Monsterrat-regular;
+    font-weight: 400;
+    font-size: 14px;
+}

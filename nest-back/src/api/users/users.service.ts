@@ -50,9 +50,10 @@ export class UsersService implements IUserService {
     }
 
     return await this.userRepository.find({
-      skip: params.offset || 0,
-      take: params.limit || 10,
+      skip: params.offset,
+      take: params.limit,
       where: whereConditions,
     });
   }
+
 }

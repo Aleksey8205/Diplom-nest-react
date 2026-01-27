@@ -9,3 +9,11 @@ export interface Rental {
   createdAt: Date;
   updatedAt: Date;
 }
+
+ export interface Message {
+  id: number;
+  author: number;
+  sentAt: string; 
+  text: string;
+  readAt: string | null;
+}

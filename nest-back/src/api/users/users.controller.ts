@@ -20,9 +20,9 @@ export class UsersController {
     console.error(error);
     return res.status(400).json({ message: 'Email уже используется' });
   }
-
   }//рабочий
 
+  @UseGuards(JwtGuard)
   @Get(':id')
   async findById(@Param('id') id: number) {
     return await this.usersService.findById((id));

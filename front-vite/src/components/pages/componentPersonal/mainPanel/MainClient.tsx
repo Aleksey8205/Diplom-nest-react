@@ -1,11 +1,13 @@
-// import  { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
+import SupportChat from "../modal/SupportChat";
 import "../style/mainPAnel.css";
 import { Link } from "react-router-dom";
+import { MessageSquare } from "lucide-react";
 
 // const API_URL = import.meta.env.VITE_API_URL ?? "";
 
 const MainClient = () => {
-  
+  const [createModal, setCreateModal] = useState(false);
 
   return (
     <>
@@ -24,6 +26,13 @@ const MainClient = () => {
           </div>
         </div>
       </section>
+      <button className="button-one chat" onClick={() => setCreateModal(true)}>
+      <MessageSquare />
+            </button>
+      <SupportChat
+            isOpen={createModal}
+            onClose={() => setCreateModal(false)}
+          />
     </>
   );
 };

@@ -63,7 +63,6 @@
   height: 0;
 }
 
-/* Оформляем метку, которая замещает радиокнопку */
 .radio-label {
   display: block;
   position: relative;
@@ -71,7 +70,6 @@
   transition: color 0.2s ease;
 }
 
-/* Псевдоэлемент для обозначения круга радиокнопки */
 .radio-label::before {
   content: '';
   position: absolute;
@@ -86,7 +84,6 @@
   outline-offset: 10px;
 }
 
-/* Выбранная радиокнопка выделяется голубым кругом */
 .radio-input:checked ~ .radio-label::before {
   background-color: #6AA378;
   width: 12px;
@@ -95,7 +92,7 @@
 }
 
 
-/* Контроль фокусировки */
-.radio-input:focus ~ .radio-label::before {
-
+.textarea {
+  max-width: 100%;
+  min-height: 80px;
 }
