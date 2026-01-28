@@ -96,9 +96,7 @@ const Booking = ({ bookItem }: IBooking) => {
         throw new Error("Ошибка сервера при создании бронирования.");
       }
 
-      const result = await response.json();
       console.log("Данные успешно отправлены:");
-
       setShowForm(true);
     } catch (error) {
       console.error("Ошибка при отправке данных:", error);

@@ -1,6 +1,6 @@
-import  { useEffect, useState } from "react";
+import  { useState } from "react";
 import SupportChat from "../modal/SupportChat";
-import "../style/mainPAnel.css";
+import "../style/mainPanel.css";
 import { Link } from "react-router-dom";
 import { MessageSquare } from "lucide-react";
 

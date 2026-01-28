@@ -5,11 +5,17 @@ import {
   Get,
   Param,
   Body,
-  Put
+  Put,
+  UseGuards
 } from '@nestjs/common';
 import { LibraryService } from './library.service';
 import { LibraryEntity } from 'src/entities/library.entity';
+import { JwtGuard } from 'src/guards/jwt.guards';
+import { RolesGuard } from 'src/guards/role.guard';
+import { Roles } from 'src/guards/roles.decorator';
 
+@UseGuards(JwtGuard, RolesGuard)
+@Roles('admin')
 @Controller('api/library')
 export class LibraryController {
   constructor(private readonly libraryService: LibraryService) {}
@@ -18,6 +24,7 @@ export class LibraryController {
   async findAll(): Promise<LibraryEntity[]> {
     return this.libraryService.findAll();
   }
+
   @Post()
   async create(
     @Body() data: { name: string; address: string; description: string },

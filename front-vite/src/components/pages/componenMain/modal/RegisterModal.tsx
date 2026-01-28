@@ -16,7 +16,7 @@ const RegisterModal = ({ isOpen, onClose }: IRegisterModalProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [contactPhone, setContactPhone] = useState("default");
+  const [contactPhone] = useState("default");
   const [message, setMessage] = useState("");
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -40,7 +40,7 @@ const RegisterModal = ({ isOpen, onClose }: IRegisterModalProps) => {
           });
         }
       })
-      .then((result) => {
+      .then(() => {
         onClose()
       })
       .catch((error) => {

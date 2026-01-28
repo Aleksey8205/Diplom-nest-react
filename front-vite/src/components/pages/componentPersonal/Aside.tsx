@@ -41,7 +41,7 @@ const Aside = () => {
           throw new Error("Logout failed");
         }
       })
-      .then((data) => {
+      .then(() => {
         dispatch(logout());
         navigate("/");
         console.log("Logout successful");

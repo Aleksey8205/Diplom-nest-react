@@ -29,7 +29,7 @@ const Pagination = ({ totalPages, currentPage, onPageChange }: PaginationProps) 
       <button className='pagination-arrow left' onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}>
         «
       </button>
-      {pageNumbers.map((page) => (
+      {pageNumbers.map((page: any) => (
         <button
           key={page}
           onClick={() => onPageChange(page)}

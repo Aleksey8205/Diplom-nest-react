@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import ReactModal from "react-modal";
 import {
-  X,
+  // X,
   Search,
   EllipsisVertical,
   SendHorizontal,
   Paperclip,
   Smile,
 } from "lucide-react";
-import { connectSocket, disconnectSocket } from "../../../../utils/socket";
+import { connectSocket, 
+  // disconnectSocket 
+} from "../../../../utils/socket";
 import "../style/supportChat.css";
 import { RootState } from "../../../../utils/interface";
 import { useSelector } from "react-redux";
@@ -24,7 +26,7 @@ interface IModalProps {
 const API_URL = import.meta.env.VITE_API_URL ?? "";
 
 const SupportChat = ({ isOpen, onClose }: IModalProps) => {
-  const [messages, setMessages] = useState<Message[]>([]); // Явно указываем тип как массив объектов Message
+  const [messages, setMessages] = useState<Message[]>([]); 
   const [currentMessage, setCurrentMessage] = useState("");
   const [socket, setSocket] = useState<any>(null);
   const [supportRequestId, setSupportRequestId] = useState<number | null>(null); 
@@ -35,7 +37,7 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
 
   useEffect(() => {
     if (isOpen && !supportRequestId) {
-      fetch(`${API_URL}/api/support-requests?user=${user.user?.id}`)
+      fetch(`${API_URL}/api/support-requests?user=${user.user?.id}`, { credentials: 'include' })
         .then((res) => res.json())
         .then((results) => {
           if (results.length > 0) {
@@ -45,6 +47,7 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
           } else {
             fetch(`${API_URL}/api/support-requests`, {
               method: "POST",
+              credentials: 'include',
               headers: {
                 "Content-Type": "application/json",
               },
@@ -67,13 +70,14 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
     if (supportRequestId !== null) {
       fetch(`${API_URL}/api/support-requests/${supportRequestId}/messages/read`, {
         method: "POST",
+        credentials: 'include' ,
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ createdBefore: new Date().toISOString() }),
       });
   
-      fetch(`${API_URL}/api/support-requests/${supportRequestId}/messages`)
+      fetch(`${API_URL}/api/support-requests/${supportRequestId}/messages`, { credentials: 'include' })
         .then((res) => res.json())
         .then((msgs) => {
           setMessages(msgs); // Здесь msgs уже имеют тип Message[], поэтому присваиваем напрямую
@@ -106,6 +110,7 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
     if (currentMessage.trim() && supportRequestId !== null) {
       fetch(`${API_URL}/api/support-requests/${supportRequestId}/messages`, {
         method: "POST",
+        credentials: 'include', 
         headers: {
           "Content-Type": "application/json",
         },

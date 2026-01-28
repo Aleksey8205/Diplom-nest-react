@@ -73,7 +73,7 @@ const LibrariesComponent = () => {
             <p className="gray-text">Всего книг</p>
             <p className="gray-text">Доступно</p>
           </div>
-          {libraries.map((library: LibraryMap, idx) => (
+          {libraries.map((library: LibraryMap) => (
             <div key={library.id} className="user-item">
               <p>{library.id}</p>
               <div className="user-information">

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Rental } from "./interface";
 
-import "../style/mainPAnel.css"
+import "../style/mainPanel.css"
 
 const API_URL = import.meta.env.VITE_API_URL ?? "";
 

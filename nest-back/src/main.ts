@@ -5,6 +5,9 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import cookieParser from 'cookie-parser';
 import * as express from 'express';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 
 async function bootstrap() {

@@ -1,8 +1,10 @@
-import { Controller, Post, Get, Param, Body, Query, Inject, Req, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, Query, Inject, Req, BadRequestException, UseGuards } from '@nestjs/common';
 import { SupportRequestService } from './support.service';
 import { CreateSupportRequestDto, GetChatListParams, SendMessageDto } from './dto/support.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { JwtGuard } from 'src/guards/jwt.guards';
 
+@UseGuards(JwtGuard)
 @Controller('api/support-requests')
 export class SupportRequestController {
   constructor(

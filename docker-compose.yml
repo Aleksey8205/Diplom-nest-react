@@ -1,0 +1,38 @@
+version: '3'
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build: ./nest-back
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      PORT: ${BACKEND_PORT}
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    command: yarn start:prod
+    volumes:
+      - ./backend:/usr/src/app
+
+  frontend:
+    build: ./front-vite
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT}:80"
+    volumes:
+      - ./front-vite:/app
+
+volumes:
+  pgdata:
