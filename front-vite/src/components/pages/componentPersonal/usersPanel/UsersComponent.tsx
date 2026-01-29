@@ -4,7 +4,8 @@ import type { RentalMap, UserMap } from "./interface/interface.ts";
 import "../style/usersPanel.css";
 import UserCreate from "../modal/CreateUserModal.tsx";
 import { BookOpen, ContactRound, MessageSquare, UserRound } from "lucide-react";
-import Pagination from './Pagination';
+import Pagination from "./Pagination";
+import SupportChat from "../modal/SupportChat.tsx";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "";
 
@@ -15,6 +16,9 @@ const UsersComponent = () => {
   const [searchParam, setSearchParam] = useState("");
   const [createModal, setCreateModal] = useState(false);
 
+  const [chatModal, setChatModal] = useState(false);
+  const [selectUser, setSelectUser] = useState<number>()
+
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
 
@@ -24,10 +28,10 @@ const UsersComponent = () => {
 
   useEffect(() => {
     Promise.all([
-      fetch(`${API_URL}/api/users`),
-      fetch(`${API_URL}/api/rentals`)
+      fetch(`${API_URL}/api/users`, { credentials: "include" }),
+      fetch(`${API_URL}/api/rentals`, { credentials: "include" }),
     ])
-      .then((responses) => Promise.all(responses.map(res => res.json())))
+      .then((responses) => Promise.all(responses.map((res) => res.json())))
       .then(([usersResponse, rentalsResponse]) => {
         setUsers(usersResponse);
         setRentals(rentalsResponse);
@@ -44,22 +48,34 @@ const UsersComponent = () => {
     reservationCount[userId] = (reservationCount[userId] || 0) + 1;
   }
 
-  const lastActivityDate = (userId: number, rentals: RentalMap[]): string | undefined => {
-    const userRentals = rentals.filter(rental => rental.userId === userId);
+  const lastActivityDate = (
+    userId: number,
+    rentals: RentalMap[]
+  ): string | undefined => {
+    const userRentals = rentals.filter((rental) => rental.userId === userId);
 
     const sortedRentals = userRentals.sort((a, b) => {
       const startA = new Date(a.dateStart).getTime();
       const startB = new Date(b.dateStart).getTime();
-      return startB - startA; 
+      return startB - startA;
     });
 
-    return sortedRentals.length > 0 ? new Date(sortedRentals[0].dateStart).toLocaleDateString() : undefined;
+    return sortedRentals.length > 0
+      ? new Date(sortedRentals[0].dateStart).toLocaleDateString()
+      : undefined;
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    fetch(`${API_URL}/api/users?name=${searchParam}`);
+    fetch(`${API_URL}/api/users?name=${searchParam}`, {
+      credentials: "include",
+    });
+  };
+
+  const handleSelectUser = (user: UserMap) => {
+    setSelectUser(user.id); 
+    setChatModal(true); 
   };
 
   return (
@@ -107,8 +123,11 @@ const UsersComponent = () => {
                   <p className="gray-text">{user.contactPhone}</p>
                   <p className="gray-text">{user.email}</p>
                 </div>
-                <p>{lastActivityDate(user.id, rentals) || new Date(user.createdAt).toLocaleDateString()}</p>
-                <p>{reservationCount[user.id]?.toString() || '0'}</p>
+                <p>
+                  {lastActivityDate(user.id, rentals) ||
+                    new Date(user.createdAt).toLocaleDateString()}
+                </p>
+                <p>{reservationCount[user.id]?.toString() || "0"}</p>
                 {user.role === "client" ? (
                   <p>
                     <UserRound />
@@ -123,13 +142,25 @@ const UsersComponent = () => {
                   </p>
                 ) : null}
                 <p>
-                  <MessageSquare />
+                  <button
+                   onClick={() => handleSelectUser(user)}
+
+                   >
+                    <MessageSquare />
+                  </button>
                 </p>
               </div>
             ))}
         </div>
-        <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
       </section>
+      <SupportChat isOpen={chatModal}
+      selectUser={selectUser}
+       onClose={() => setChatModal(false)} />
     </>
   );
 };

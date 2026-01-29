@@ -12,34 +12,31 @@ const MainAdmin = () => {
   const [rental, setRental] = useState<Rental[]>([])
 
   useEffect(() => {
-    fetch(`${API_URL}/api/library`)
+    fetch(`${API_URL}/api/library`,  { credentials: 'include' })
       .then((response) => response.json())
       .then((data) => setLibrary(data))
       .catch((error) => console.log(error));
 
-    fetch(`${API_URL}/api/users`)
+    fetch(`${API_URL}/api/users`,  { credentials: 'include' })
       .then((response) => response.json())
       .then((data) => setUsers(data))
       .catch((error) => console.log(error));
 
-    fetch(`${API_URL}/api/rentals`)
+    fetch(`${API_URL}/api/rentals`,  { credentials: 'include' })
       .then((response) => response.json())
       .then((data) => setRental(data))
       .catch((error) => console.log(error));
 
-    fetch(`${API_URL}/api/books`)
+    fetch(`${API_URL}/api/books` , { credentials: 'include' })
       .then((response) => response.json())
       .then((data) => setBooks(data))
       .catch((error) => console.log(error));
   }, []);
 
-  const userIds = rental.map(rental => rental.userId);
+  const userIds = Array.isArray(rental) ? rental.map(rentalItem => rentalItem.userId) : [];
 
   const uniqueUserIds = Array.from(new Set(userIds));
   
-
-  
-
   const libraryLength = library.length;
   const booksLength = books.length;
   const usersLength = users.length;

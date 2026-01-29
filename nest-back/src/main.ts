@@ -5,9 +5,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import cookieParser from 'cookie-parser';
 import * as express from 'express';
-import * as dotenv from 'dotenv';
 
-dotenv.config();
 
 
 async function bootstrap() {
@@ -16,7 +14,10 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:5173',
-      'http://localhost:5174'
+      'http://localhost:5174',
+      'http://localhost:80',
+      'http://backend',
+      'http://localhost'
     ],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],

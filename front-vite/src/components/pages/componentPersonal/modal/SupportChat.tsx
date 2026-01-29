@@ -20,12 +20,13 @@ import { Message } from "../mainPanel/interface";
 
 interface IModalProps {
   isOpen: boolean;
+  selectUser?: number;
   onClose: () => void;
 }
 
 const API_URL = import.meta.env.VITE_API_URL ?? "";
 
-const SupportChat = ({ isOpen, onClose }: IModalProps) => {
+const SupportChat = ({ isOpen, selectUser, onClose }: IModalProps) => {
   const [messages, setMessages] = useState<Message[]>([]); 
   const [currentMessage, setCurrentMessage] = useState("");
   const [socket, setSocket] = useState<any>(null);
@@ -37,7 +38,9 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
 
   useEffect(() => {
     if (isOpen && !supportRequestId) {
-      fetch(`${API_URL}/api/support-requests?user=${user.user?.id}`, { credentials: 'include' })
+      let targetUserId = selectUser || user.user?.id; 
+
+      fetch(`${API_URL}/api/support-requests?user=${targetUserId}`, { credentials: 'include' })
         .then((res) => res.json())
         .then((results) => {
           if (results.length > 0) {
@@ -52,7 +55,7 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                user: user.user?.id!,
+                user: targetUserId,
                 text: "",
               }),
             })
@@ -64,7 +67,7 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
           }
         });
     }
-  }, [isOpen, supportRequestId, user]);
+  }, [isOpen, supportRequestId,selectUser, user]);
 
   useEffect(() => {
     if (supportRequestId !== null) {
@@ -80,14 +83,14 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
       fetch(`${API_URL}/api/support-requests/${supportRequestId}/messages`, { credentials: 'include' })
         .then((res) => res.json())
         .then((msgs) => {
-          setMessages(msgs); // Здесь msgs уже имеют тип Message[], поэтому присваиваем напрямую
+          setMessages(msgs); 
         });
   
       const newSocket = connectSocket();
       setSocket(newSocket);
       newSocket.emit("subscribeToChat", { supportRequestId });
   
-      newSocket.on("newMessage", (msg: Message) => { // now receiving Message object instead of just string
+      newSocket.on("newMessage", (msg: Message) => { 
         setMessages((prevMsgs) => [...prevMsgs, msg]);
       });
     }

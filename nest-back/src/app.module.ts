@@ -6,6 +6,9 @@ import { BookModule } from './api/books/books.module';
 import { BookRentalModule } from './api/rentails/rental.module';
 import { GuardModule } from './guards/jwt.auth.guard.module';
 import { SupportRequestModule } from './api/chat/support.module';
+import  dotenv from 'dotenv';
+
+dotenv.config();
 
 @Module({
   imports: [

@@ -1,7 +1,7 @@
 version: '3'
 services:
   db:
-    image: postgres:latest
+    image: postgres:18
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql
 
   backend:
     build: ./nest-back
@@ -21,9 +21,9 @@ services:
       PORT: ${BACKEND_PORT}
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
-    command: yarn start:prod
+    command: npm run start:prod
     volumes:
-      - ./backend:/usr/src/app
+      - ./nest-back:/usr/src/app
 
   frontend:
     build: ./front-vite
