@@ -3,8 +3,6 @@ import { Message } from 'src/entities/message.entity';
 import { GetChatListParams, SendMessageDto,CreateSupportRequestDto,MarkMessagesAsReadDto } from '../dto/support.dto';
 
 
-
-
 export interface ISupportRequestService {
   findSupportRequests(params: GetChatListParams): Promise<SupportRequest[]>;
   sendMessage(data: SendMessageDto): Promise<Message>;

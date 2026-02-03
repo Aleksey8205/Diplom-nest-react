@@ -1,121 +1,78 @@
-// Service implementation using TypeORM for database operations
-
 import { Injectable } from '@nestjs/common';
-import { IsNull, Repository, LessThan, Not } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { SupportRequest } from 'src/entities/supportRequest.entity';
 import { Message } from 'src/entities/message.entity';
-import {
-  CreateSupportRequestDto,
-  GetChatListParams,
-  SendMessageDto,
-} from './dto/support.dto';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { AuthService } from '../authentificate/auth.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { LessThanOrEqual, IsNull } from 'typeorm';
 
 @Injectable()
 export class SupportRequestService {
-  constructor(
-    @InjectRepository(SupportRequest)
-    private readonly supportRequestRepo: Repository<SupportRequest>,
-    @InjectRepository(Message)
-    private readonly messageRepo: Repository<Message>,
-    private readonly eventEmitter: EventEmitter2,
-    private readonly authService: AuthService,
-  ) {}
+    constructor(
+      @InjectRepository(SupportRequest)
+      private readonly requestsRepo: Repository<SupportRequest>,
+      @InjectRepository(Message)
+      private readonly messagesRepo: Repository<Message>,
+    ) {}
 
-  async create(dto: CreateSupportRequestDto) {
-    const request = this.supportRequestRepo.create(dto);
-    return this.supportRequestRepo.save(request);
-  }
-
-  async findAll(params: GetChatListParams) {
-    return this.supportRequestRepo.find({ where: { ...params } });
-  }
-
-  async getMessages(id: number) {
-    return this.messageRepo.find({
-      where: { supportRequest: { id } },
-      order: { sentAt: 'ASC' },
-    });
-  }
-
-  async sendMessage(dto: SendMessageDto): Promise<Message> {
-    const message = this.messageRepo.create({
-      text: dto.text,
-      author: dto.author,
-      supportRequest: { id: dto.supportRequest },
-    });
-    const savedMessage = await this.messageRepo.save(message);
-    this.eventEmitter.emit('message:sent', savedMessage); // Emit events for further processing
-    return savedMessage;
-  }
-
-  async markMessagesAsRead(id: number, createdBefore: Date) {
-    await this.messageRepo.update(
-      {
-        supportRequest: { id },
-        readAt: IsNull(),
-        sentAt: LessThan(createdBefore),
-      },
-      { readAt: new Date() },
-    );
-  }
-
-  async getUnreadCountFromSupport(id: number): Promise<number> {
-    return this.messageRepo.count({
-      where: {
-        supportRequest: { id },
-        readAt: IsNull(),
-        author: Not(id),
-      },
-    });
-  }
-
-  async markMessagesAsReadFromSupport(id: number, createdBefore: Date) {
-    await this.messageRepo.update(
-      {
-        supportRequest: { id },
-        readAt: IsNull(),
-        sentAt: LessThan(createdBefore),
-        author: Not(id),
-      },
-      { readAt: new Date() },
-    );
-  }
-
-  async getUnreadCountFromUser(id: number): Promise<number> {
-    return this.messageRepo.count({
-      where: {
-        supportRequest: { id },
-        readAt: IsNull(),
-        author: id,
-      },
-    });
-  }
-
-  async markMessagesAsReadFromUser(id: number, createdBefore: Date) {
-    await this.messageRepo.update(
-      {
-        supportRequest: { id },
-        readAt: IsNull(),
-        sentAt: LessThan(createdBefore),
-        author: id,
-      },
-      { readAt: new Date() },
-    );
-  }
-
-  async closeRequest(id: number) {
-    await this.supportRequestRepo.update({ id }, { isActive: false });
-  }
-
-  async authenticate(token: string): Promise<boolean> {
-    try {
-      const decoded = this.authService.checkUser(token);
-      return true;
-    } catch (error) {
-      return false;
+    async createSupportRequest(userId: number, text: string): Promise<SupportRequest> {
+      const request = this.requestsRepo.create({
+        user: userId,
+        createdAt: new Date(),
+        isActive: true,
+        messages: [],
+      });
+      await this.requestsRepo.save(request);
+      return request;
     }
+
+    async addMessage(requestId: number, authorId: number, text: string): Promise<Message> {
+      const supportRequest = await this.requestsRepo.findOneBy({ id: requestId }); // Сначала получаем объект
+    
+      if (!supportRequest) {
+        throw new Error("Запрос не найден");
+      }
+    
+      const message = new Message();
+      message.author = authorId;
+      message.sentAt = new Date();
+      message.text = text;
+      message.supportRequest = supportRequest; 
+    
+      await this.messagesRepo.save(message);
+      return message;
+    }
+
+
+    async markMessagesAsRead(requestId: number, beforeDate: Date): Promise<void> {
+      const supportRequest = await this.requestsRepo.findOneBy({ id: requestId });
+  
+      if (!supportRequest) {
+        throw new Error("Запрос не найден"); 
+      }
+
+      await this.messagesRepo.update(
+        {
+          supportRequest, // Используем полученный объект
+          readAt: IsNull(),
+          sentAt: LessThanOrEqual(beforeDate),
+        },
+        { readAt: new Date() },
+      );
   }
+
+    async closeRequest(requestId: number): Promise<void> {
+      await this.requestsRepo.update(requestId, { isActive: false });
+    }
+
+    async getUserChats(userId: number): Promise<SupportRequest[]> {
+      return this.requestsRepo.find({ where: { user: userId } });
+    }
+
+    async getAllChats(): Promise<SupportRequest[]> {
+      return this.requestsRepo.find();
+    }
+
+    async getChatHistory(requestId: number): Promise<Message[]> {
+      return this.messagesRepo.find({ where: { supportRequest: { id: requestId } } });
+    }
 }

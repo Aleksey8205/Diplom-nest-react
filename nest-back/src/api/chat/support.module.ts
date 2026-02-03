@@ -4,15 +4,14 @@ import { SupportRequest } from 'src/entities/supportRequest.entity';
 import { Message } from 'src/entities/message.entity';
 import { SupportRequestService } from './support.service';
 import { SupportRequestController } from './support.controller';
-import { ChatGateway } from './support.gateway';
+import { SupportRequestGateway } from './support.gateway';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { AuthService } from '../authentificate/auth.service';
 import { AuthModule } from '../authentificate/auth.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([SupportRequest, Message]), AuthModule],
   controllers: [SupportRequestController],
-  providers: [SupportRequestService, ChatGateway, EventEmitter2],
+  providers: [SupportRequestService, SupportRequestGateway, EventEmitter2],
   exports: [],
 })
 export class SupportRequestModule {}

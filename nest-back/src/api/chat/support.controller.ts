@@ -1,43 +1,64 @@
-import { Controller, Post, Get, Param, Body, Query, Inject, Req, BadRequestException, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Param,
+  Body,
+  UseGuards,
+  Request,
+  Req,
+} from '@nestjs/common';
 import { SupportRequestService } from './support.service';
-import { CreateSupportRequestDto, GetChatListParams, SendMessageDto } from './dto/support.dto';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { JwtGuard } from 'src/guards/jwt.guards';
 
-@UseGuards(JwtGuard)
-@Controller('api/support-requests')
+// @UseGuards(JwtGuard)
+@Controller('/api/support-requests')
 export class SupportRequestController {
-  constructor(
-    private readonly supportRequestService: SupportRequestService,
-    @Inject(EventEmitter2) private eventEmitter: EventEmitter2,
-  ) {}
+  constructor(private readonly service: SupportRequestService) {}
 
-  @Post()
-  async create(@Body() dto: CreateSupportRequestDto) {
-    const result = await this.supportRequestService.create(dto);
-    this.eventEmitter.emit('support-request:new', result);
-    return result;
+  // 🔥 Получение всех чатов
+  @Get('/')
+  async getAllChats(@Request() req) {
+    return this.service.getAllChats();
   }
 
-  @Get()
-  async findAll(@Query() params: GetChatListParams) {
-    return this.supportRequestService.findAll(params);
+  // 🔥 Получение чатов пользователя
+  @Get('/user/:userId')
+  async getUserChats(@Param('userId') userId: number) {
+    return this.service.getUserChats(userId);
   }
 
-  @Get(':id/messages')
-  async getMessages(@Param('id') id: string) {
-    return this.supportRequestService.getMessages(+id);
+  // 🔥 Создание нового чата
+  @Post('/')
+  async createSupportRequest(@Request() req, @Body() body) {
+    return this.service.createSupportRequest(req.user.id, body.text);
   }
 
-  @Post(':id/messages')
-  async sendMessage(@Param('id') id: number, @Body() messageData: SendMessageDto) {
-    const dto = messageData;
-    const result = await this.supportRequestService.sendMessage(dto);
-    return result;
+  // 🔥 Добавление сообщения
+  @Post('/:requestId/messages')
+  async addMessage(@Param('requestId') requestId: number, @Body() body) {
+    return this.service.addMessage(requestId, body.author, body.text);
   }
 
-  @Post(':id/messages/read')
-  async markMessagesAsRead(@Param('id') id: string, @Body() data: any) {
-    return this.supportRequestService.markMessagesAsRead(+id, data.createdBefore);
+  // 🔥 Закрытие чата
+  @Post('/:requestId/close')
+  async closeRequest(@Param('requestId') requestId: number) {
+    return this.service.closeRequest(requestId);
+  }
+
+  @Post('/mark-read/:requestId') async markMessagesAsRead(
+    @Param('requestId') requestId: number,
+    @Body() body,
+  ) {
+    return this.service.markMessagesAsRead(
+      requestId,
+      new Date(body.beforeDate),
+    );
+  }
+
+  // 🔥 История сообщений
+  @Get('/history/:requestId')
+  async getChatHistory(@Param('requestId') requestId: number) {
+    return this.service.getChatHistory(requestId);
   }
 }
