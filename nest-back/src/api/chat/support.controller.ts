@@ -30,12 +30,11 @@ export class SupportRequestController {
   }
 
   @Post(':id/messages')
-  async sendMessage(@Param('id') id: number, @Body() messageData:  SendMessageDto) {
+  async sendMessage(@Param('id') id: number, @Body() messageData: SendMessageDto) {
     const dto = messageData;
     const result = await this.supportRequestService.sendMessage(dto);
     return result;
   }
-  
 
   @Post(':id/messages/read')
   async markMessagesAsRead(@Param('id') id: string, @Body() data: any) {

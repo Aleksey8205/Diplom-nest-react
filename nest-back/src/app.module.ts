@@ -7,6 +7,8 @@ import { BookRentalModule } from './api/rentails/rental.module';
 import { GuardModule } from './guards/jwt.auth.guard.module';
 import { SupportRequestModule } from './api/chat/support.module';
 import  dotenv from 'dotenv';
+import { GlobalExceptionFilter } from './middleware/httpExceprion';
+import { APP_FILTER } from '@nestjs/core';
 
 dotenv.config();
 
@@ -30,6 +32,7 @@ dotenv.config();
     BookRentalModule,
     SupportRequestModule,
   ],
+  providers: [{ provide: APP_FILTER, useClass: GlobalExceptionFilter }]
 })
 export class AppModule {
 }

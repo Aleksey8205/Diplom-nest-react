@@ -1,22 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import ReactModal from "react-modal";
 import {
-  // X,
   Search,
   EllipsisVertical,
   SendHorizontal,
   Paperclip,
   Smile,
 } from "lucide-react";
-import { connectSocket, 
-  // disconnectSocket 
-} from "../../../../utils/socket";
+import { connectSocket } from "../../../../utils/socket";
 import "../style/supportChat.css";
 import { RootState } from "../../../../utils/interface";
 import { useSelector } from "react-redux";
 import type { Request } from "../interface/requests";
-import type { UserInfo } from "../../../../utils/interface";
 import { Message } from "../mainPanel/interface";
+import { UserInfo } from "../../../../utils/interface";
 
 interface IModalProps {
   isOpen: boolean;
@@ -27,97 +24,79 @@ interface IModalProps {
 const API_URL = import.meta.env.VITE_API_URL ?? "";
 
 const SupportChat = ({ isOpen, selectUser, onClose }: IModalProps) => {
-  const [messages, setMessages] = useState<Message[]>([]); 
+  const [messages, setMessages] = useState<Message[]>([]);
   const [currentMessage, setCurrentMessage] = useState("");
-  const [socket, setSocket] = useState<any>(null);
-  const [supportRequestId, setSupportRequestId] = useState<number | null>(null); 
+  const [socket, setSocket] = useState(null);
+  const [supportRequestId, setSupportRequestId] = useState<number>();
   const [request, setRequest] = useState<Request>();
   const user = useSelector((state: RootState) => state.auth);
-
   const [userId, setUserId] = useState<UserInfo | null>(null);
 
-  useEffect(() => {
-    if (isOpen && !supportRequestId) {
-      let targetUserId = selectUser || user.user?.id; 
+  // Метод загрузки данных и инициализации сокета
+  const initializeChat = useCallback(async () => {
+    if (!isOpen) return;
 
-      fetch(`${API_URL}/api/support-requests?user=${targetUserId}`, { credentials: 'include' })
-        .then((res) => res.json())
-        .then((results) => {
-          if (results.length > 0) {
-            const firstRequest = results[0];
-            setRequest(firstRequest);
-            setSupportRequestId(firstRequest.id);
-          } else {
-            fetch(`${API_URL}/api/support-requests`, {
-              method: "POST",
-              credentials: 'include',
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                user: targetUserId,
-                text: "",
-              }),
-            })
-              .then((res) => res.json())
-              .then((newRequest) => {
-                setRequest(newRequest);
-                setSupportRequestId(newRequest.id);
-              });
-          }
-        });
-    }
-  }, [isOpen, supportRequestId,selectUser, user]);
-
-  useEffect(() => {
-    if (supportRequestId !== null) {
-      fetch(`${API_URL}/api/support-requests/${supportRequestId}/messages/read`, {
-        method: "POST",
-        credentials: 'include' ,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ createdBefore: new Date().toISOString() }),
+    let targetUserId = selectUser || user.user?.id;
+    fetch(`${API_URL}/api/support-requests?user=${targetUserId}`, {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((results) => {
+        if (results.length > 0) {
+          const firstRequest = results[0];
+          setRequest(firstRequest);
+          setSupportRequestId(firstRequest.id);
+          
+          // Загружаем предыдущие сообщения
+          fetch(`${API_URL}/api/support-requests/${firstRequest.id}/messages`, {
+            credentials: "include",
+          }).then((res) => res.json()).then((msgs) => {
+            setMessages(msgs);
+          });
+        }
       });
-  
-      fetch(`${API_URL}/api/support-requests/${supportRequestId}/messages`, { credentials: 'include' })
-        .then((res) => res.json())
-        .then((msgs) => {
-          setMessages(msgs); 
-        });
-  
+
+    // Устанавливаем соединение с WebSocket
+    if (supportRequestId !== null) {
       const newSocket = connectSocket();
       setSocket(newSocket);
-      newSocket.emit("subscribeToChat", { supportRequestId });
-  
-      newSocket.on("newMessage", (msg: Message) => { 
+
+      // Прислушиваемся к событию получения новых сообщений
+      newSocket.on("newMessage", (msg: Message) => {
         setMessages((prevMsgs) => [...prevMsgs, msg]);
       });
-    }
-  }, [supportRequestId]);
 
-  useEffect(() => {
-    if (supportRequestId !== null && request?.user) {
-      fetch(`${API_URL}/api/users/${request?.user}`, { credentials: 'include' })
-        .then((res) => res.json())
-        .then((usr) => {
-          setUserId(usr);
-        })
-        .catch((error) => {
-          console.error("Ошибка при поиске пользователя:", error);
-        });
+
+      newSocket.emit("subscribeToChat", { supportRequest: supportRequestId });
     }
-  }, [supportRequestId, request]);
+  }, [isOpen, selectUser, user, supportRequestId]);
+
+  // Запускаем инициализацию при открытии модала
+  useEffect(() => {
+    if (isOpen) {
+      initializeChat();
+    } else {
+      // Отключаемся от сокета при закрытии модала
+      if (socket) {
+        socket.disconnect();
+        setSocket(null);
+      }
+    }
+  }, [isOpen, initializeChat, socket]);
 
   const handleSendMessage = () => {
     if (currentMessage.trim() && supportRequestId !== null) {
       fetch(`${API_URL}/api/support-requests/${supportRequestId}/messages`, {
         method: "POST",
-        credentials: 'include', 
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ supportRequest: supportRequestId, text: currentMessage, author: user.user?.id }),
+        body: JSON.stringify({
+          supportRequest: supportRequestId,
+          text: currentMessage,
+          author: user.user?.id,
+        }),
       });
 
       if (socket) {
@@ -128,16 +107,6 @@ const SupportChat = ({ isOpen, selectUser, onClose }: IModalProps) => {
         });
       }
 
-      const tempMsg: Message = {
-        id: 1,
-        author: user.user?.id!,
-        sentAt: new Date().toISOString(),
-        text: currentMessage,
-        readAt: null,
-      };
-
-      setMessages((prevMsgs) => [...prevMsgs, tempMsg]);
-
       setCurrentMessage("");
     }
   };
@@ -146,8 +115,8 @@ const SupportChat = ({ isOpen, selectUser, onClose }: IModalProps) => {
     return null;
   }
 
-  const fullDateTime = request.createdAt; 
-  const dateOnly = new Date(fullDateTime).toLocaleDateString(); 
+  const fullDateTime = request.createdAt;
+  const dateOnly = new Date(fullDateTime).toLocaleDateString();
 
   return (
     <>
@@ -163,30 +132,29 @@ const SupportChat = ({ isOpen, selectUser, onClose }: IModalProps) => {
             <a href="">LOGO</a>
             <p>Техподдержка</p>
             <div className="flex">
-              <p>
-                <Search />
-              </p>
-              <p>
-                <EllipsisVertical />
-              </p>
+              <p><Search /></p>
+              <p><EllipsisVertical /></p>
             </div>
           </header>
 
           <div className="message-box">
             <p className="created-chat">{dateOnly}</p>
             {messages.map((msg, index) => (
-              <div key={index} className="message-item right">
+              <div key={index} className={`message-item ${msg.author === user.user?.id ? 'right' : ''}`}>
                 <p>{userId && userId.name}</p>
                 <p>{msg.text}</p>
-                <p>{new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                <p>
+                  {new Date(msg.sentAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
               </div>
             ))}
           </div>
 
           <div className="input-message">
-            <button type="button">
-              <Paperclip />
-            </button>
+            <button type="button"><Paperclip /></button>
             <input
               className="message"
               placeholder="Сообщение..."
@@ -195,12 +163,8 @@ const SupportChat = ({ isOpen, selectUser, onClose }: IModalProps) => {
               onChange={(e) => setCurrentMessage(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
             />
-            <button type="button">
-              <Smile />
-            </button>
-            <button type="button" onClick={handleSendMessage}>
-              <SendHorizontal />
-            </button>
+            <button type="button"><Smile /></button>
+            <button type="button" onClick={handleSendMessage}><SendHorizontal /></button>
           </div>
         </div>
       </ReactModal>

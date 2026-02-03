@@ -18,6 +18,6 @@ import { jwtConstants } from '../../guards/constants';
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
-  exports: [JwtStrategy],
+  exports: [JwtStrategy, AuthService],
 })
 export class AuthModule { }
