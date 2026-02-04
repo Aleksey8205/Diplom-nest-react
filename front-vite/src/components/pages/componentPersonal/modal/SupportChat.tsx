@@ -10,9 +10,15 @@ import {
 import "../style/supportChat.css";
 import { RootState } from "../../../../utils/interface";
 import { useSelector } from "react-redux";
-import { connectSocket, disconnectSocket } from "../../../../utils/socket";
+import {
+  connectSocket,
+  disconnectSocket,
+  emitMessage,
+} from "../../../../utils/socket";
 import { Message } from "../mainPanel/interface";
+import type { Request } from "../interface/requests";
 
+// Интерфейс пропсов Modal'а
 interface IModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -21,62 +27,97 @@ interface IModalProps {
 const API_URL = import.meta.env.VITE_API_URL ?? "";
 
 const SupportChat = ({ isOpen, onClose }: IModalProps) => {
-  const [messages, setMessages] = useState<Message []>([]);
-  const [currentMessage, setCurrentMessage] = useState("");
-  const [supportRequestId, setSupportRequestId] = useState<string | null>(null);
-
   const user = useSelector((state: RootState) => state.auth);
-
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [currentMessage, setCurrentMessage] = useState<string>("");
+  const [supportRequestId, setSupportRequestId] = useState<number | null>(null);
+  const [request, setRequest] = useState<Request | null>(null);
 
   useEffect(() => {
     if (isOpen) {
-      fetch(`${API_URL}/api/support-requests/`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text: "" }),
-      })
-        .then((res) => res.json())
-        .then((newRequest) => {
-          setSupportRequestId(newRequest.id);
+      fetch(
+        `${API_URL}/support-requests/?user=${user.user?.id}&isActive=true`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.length > 0) {
+            setSupportRequestId(data[0].id);
+            setRequest(data[0]);
 
-          fetch(`${API_URL}/api/support-requests/${newRequest.id}/messages`, {
-            credentials: "include",
-          })
-            .then((res) => res.json())
-            .then((history) => setMessages(history))
-            .catch(console.error);
+            fetch(`${API_URL}/support-requests/${data[0].id}/messages`, {
+              method: "GET",
+              credentials: "include",
+            })
+              .then((resp) => resp.json())
+              .then((msgs) => {
+                setMessages(msgs);
+              })
+              .catch((error) => {
+                console.error("Ошибка при получении сообщений:", error);
+              });
+          } else {
+            fetch(`${API_URL}/support-requests`, {
+              method: "POST",
+              credentials: "include",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                user: user.user?.id,
+                isActive: true,
+              }),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                setSupportRequestId(data.id);
+                setRequest(data);
+
+                setMessages([]);
+              })
+              .catch((error) => {
+                console.error("Ошибка при создании обращения:", error);
+              });
+          }
         })
-        .catch(console.error);
+        .catch((error) => {
+          console.error("Ошибка при получении обращений:", error);
+        });
+    } else {
+      disconnectSocket();
     }
-  }, [isOpen]);
+  }, [isOpen, user]);
 
-  // 🔥 Отправка сообщения
-  const handleSendMessage = () => {
-    if (currentMessage.trim() && supportRequestId) {
-      fetch(`${API_URL}/api/support-requests/${supportRequestId}/messages`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
+  useEffect(() => {
+    if (supportRequestId) {
+      connectSocket(supportRequestId, {
+        onConnect: () => {
+          console.log("Connected to the websocket server");
         },
-        body: JSON.stringify({ 
-          requestId: supportRequestId,
-        text: currentMessage,
-        author: user.user?.id,
-         }),
-      })
-        .then((res) => res.json())
-        .then((newMessage) => {
+        onNewMessage: (newMessage: Message) => {
           setMessages((prevMsgs) => [...prevMsgs, newMessage]);
-          setCurrentMessage("");
-        })
-        .catch(console.error);
+        },
+        onMarkedAsRead: () => {
+          console.log("Messages marked as read");
+        },
+      });
     }
-  };
+  }, [supportRequestId]);
 
+  const handleSendMessage = useCallback(async () => {
+    if (currentMessage.trim() && supportRequestId) {
+      emitMessage({
+        author: user.user?.id,
+        text: currentMessage,
+        supportRequest: supportRequestId,
+      });
+
+      setCurrentMessage("");
+    }
+  }, [currentMessage, user, supportRequestId]);
 
   return (
     <>
@@ -110,7 +151,7 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
                     msg.author === user.user?.id ? "right" : ""
                   }`}
                 >
-                  <p>{msg.author}</p>
+                  <p>{user.user?.name}</p>
                   <p>{msg.text}</p>
                   <p>
                     {new Date(msg.sentAt).toLocaleTimeString([], {
@@ -121,10 +162,9 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
                 </div>
               ))
             ) : (
-              <p>Нет сообщений.</p> // 🔥 Если сообщений нет, выведем подсказку
+              <p>Нет сообщений.</p>
             )}
           </div>
-
           <div className="input-message">
             <button type="button">
               <Paperclip />

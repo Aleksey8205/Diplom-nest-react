@@ -1,55 +1,55 @@
-import { WebSocketGateway, SubscribeMessage, OnGatewayInit, OnGatewayConnection, WsResponse, WebSocketServer } from '@nestjs/websockets';
+import { WebSocketGateway, SubscribeMessage, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { SupportRequestService } from './support.service';
+import { SendMessageDto, MarkMessagesAsReadDto } from './dto/support.dto';
 
 @WebSocketGateway()
-export class SupportRequestGateway implements OnGatewayInit, OnGatewayConnection {
-    constructor(private readonly service: SupportRequestService) {}
+export class SupportRequestGateway {
+  constructor(private readonly service: SupportRequestService) {}
 
-    @WebSocketServer()
-    server: Server;
+  @WebSocketServer()
+  server: Server;
 
-    afterInit(server: Server) {
-      console.log('SocketIO initialized');
-    }
-
-    handleConnection(client: Socket) {
+  afterInit(server: Server) {
+    server.on('connection', (client: Socket) => {
       console.log(`Client connected: ${client.id}`);
+
+      const room = `chat-${client.handshake.query.chatId}`;
+      client.join(room);
+      console.log(`Client joined room: ${room}`);
+
+      client.on('disconnect', () => {
+        console.log(`Client disconnected: ${client.id}`);
+      });
+    });
+  }
+
+  @SubscribeMessage('subscribeToChat')
+  handleSubscribeToChat(client: Socket, data: { chatId: number }) {
+    const room = `chat-${data.chatId}`;
+    client.join(room);
+    console.log(`Client subscribed to room: ${room}`);
+  }
+
+  @SubscribeMessage('sendMessage')
+  async handleSendMessage(client: Socket, data: SendMessageDto) {
+    try {
+      const message = await this.service.sendMessage(data);
+      const room = `chat-${data.supportRequest}`;
+      this.server.to(room).emit('newMessage', message); 
+    } catch (err) {
+      client.emit('error', err.message);
     }
+  }
 
-    // 🔥 Отправка нового сообщения
-    @SubscribeMessage('addMessage')
-    async handleAddMessage(client: Socket, payload: { requestId: number, author: number, text: string }) {
-      const message = await this.service.addMessage(payload.requestId, payload.author, payload.text);
-      this.server.to(`chat-${payload.requestId}`).emit('newMessage', message);
+  @SubscribeMessage('markMessagesAsRead')
+  async handleMarkMessagesAsRead(client: Socket, data: MarkMessagesAsReadDto) {
+    try {
+      await this.service.markMessagesAsRead(data);
+      const room = `chat-${data.supportRequest}`;
+      this.server.to(room).emit('messagesMarkedAsRead'); 
+    } catch (err) {
+      client.emit('error', err.message);
     }
-
-    // 🔥 Подписка на чат
-    @SubscribeMessage('subscribeToChat')
-    handleSubscribeToChat(client: Socket, payload: { requestId: number }) {
-      client.join(`chat-${payload.requestId}`);
-
-      // // 🔥 Ставим сообщения как прочитанные при подключении сотрудника
-      // this.service.markMessagesAsRead(payload.requestId);
-    }
-
-    // 🔥 Отписка от чата
-    @SubscribeMessage('unsubscribeFromChat')
-    handleUnsubscribeFromChat(client: Socket, payload: { requestId: number }) {
-      client.leave(`chat-${payload.requestId}`);
-    }
-
-    // 🔥 Закрытие чата
-    @SubscribeMessage('closeRequest')
-    async handleCloseRequest(client: Socket, payload: { requestId: number }) {
-      await this.service.closeRequest(payload.requestId);
-      this.server.to(`chat-${payload.requestId}`).emit('requestClosed');
-    }
-
-    // 🔥 Маркеры прочтения сообщений
-    // @SubscribeMessage('markMessagesAsRead')
-    // async handleMarkMessagesAsRead(client: Socket, payload: { requestId: number }) {
-    //   await this.service.markMessagesAsRead(payload.requestId);
-    //   this.server.to(`chat-${payload.requestId}`).emit('messagesMarkedAsRead');
-    // }
+  }
 }

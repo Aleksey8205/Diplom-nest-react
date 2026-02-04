@@ -1,64 +1,63 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Param,
-  Body,
-  UseGuards,
-  Request,
-  Req,
-} from '@nestjs/common';
+import { Controller, Post, Get, Patch, Delete, Param, Body, UseGuards, Request, Query } from '@nestjs/common';
 import { SupportRequestService } from './support.service';
-import { JwtGuard } from 'src/guards/jwt.guards';
+import { SendMessageDto, GetChatListParams, MarkMessagesAsReadDto, CreateSupportRequestDto } from './dto/support.dto';
+import { HttpException, HttpStatus } from '@nestjs/common';
+import { JwtGuard } from '../../guards/jwt.guards';
 
-// @UseGuards(JwtGuard)
-@Controller('/api/support-requests')
+@UseGuards(JwtGuard)
+@Controller('support-requests')
 export class SupportRequestController {
-  constructor(private readonly service: SupportRequestService) {}
+    constructor(private readonly service: SupportRequestService) {}
 
-  // 🔥 Получение всех чатов
-  @Get('/')
-  async getAllChats(@Request() req) {
-    return this.service.getAllChats();
-  }
+    // GET /support-requests/?user=1&isActive=true
+    @Get()
+    async findAll(@Request() req, @Query() query: GetChatListParams) {
+      return this.service.findSupportRequests(query);
+    }
 
-  // 🔥 Получение чатов пользователя
-  @Get('/user/:userId')
-  async getUserChats(@Param('userId') userId: number) {
-    return this.service.getUserChats(userId);
-  }
+    // POST /support-requests/
+    @Post()
+    async create(@Request() req, @Body() body: CreateSupportRequestDto) {
+      return this.service.create(body);
+    }
 
-  // 🔥 Создание нового чата
-  @Post('/')
-  async createSupportRequest(@Request() req, @Body() body) {
-    return this.service.createSupportRequest(req.user.id, body.text);
-  }
+    // POST /support-requests/{id}/messages
+    @Post(':id/messages')
+    async sendMessage(@Param('id') id: number, @Body() body: SendMessageDto) {
+      return this.service.sendMessage({ ...body, supportRequest: id });
+    }
 
-  // 🔥 Добавление сообщения
-  @Post('/:requestId/messages')
-  async addMessage(@Param('requestId') requestId: number, @Body() body) {
-    return this.service.addMessage(requestId, body.author, body.text);
-  }
+    // GET /support-requests/{id}/messages
+    @Get(':id/messages')
+    async getMessages(@Param('id') id: number) {
+      const messages = await this.service.getMessages(id);
+      if (!messages.length) {
+        throw new HttpException('Нет сообщений для указанного обращения.', HttpStatus.NOT_FOUND);
+      }
+      return messages;
+    }
 
-  // 🔥 Закрытие чата
-  @Post('/:requestId/close')
-  async closeRequest(@Param('requestId') requestId: number) {
-    return this.service.closeRequest(requestId);
-  }
+    // PATCH /support-requests/{id}/mark-read
+    @Patch(':id/mark-read')
+    async markMessagesAsRead(@Param('id') id: number, @Body() body: MarkMessagesAsReadDto) {
+      await this.service.markMessagesAsRead({ ...body, supportRequest: id });
+      return { success: true };
+    }
 
-  @Post('/mark-read/:requestId') async markMessagesAsRead(
-    @Param('requestId') requestId: number,
-    @Body() body,
-  ) {
-    return this.service.markMessagesAsRead(
-      requestId,
-      new Date(body.beforeDate),
-    );
-  }
+    // DELETE /support-requests/{id}
+    @Delete(':id')
+    async delete(@Param('id') id: number) {
+      await this.service.closeRequest(id);
+      return { success: true };
+    }
 
-  // 🔥 История сообщений
-  @Get('/history/:requestId')
-  async getChatHistory(@Param('requestId') requestId: number) {
-    return this.service.getChatHistory(requestId);
-  }
+    // GET /support-requests/unread-count/{id}
+    @Get('unread-count/:id')
+    async unreadCount(@Param('id') id: number, @Request() req) {
+      if (req.user.role === 'employee') {
+        return this.service.getUnreadCountForEmployee(id);
+      } else {
+        return this.service.getUnreadCountForClient(id);
+      }
+    }
 }
