@@ -57,14 +57,18 @@
 }
 
 .message {
-   border: none;
-   outline: none;
-   background-color: inherit;
-   width: 385px;
+    border: none;
+    outline: none;
+    background-color: inherit;
+    width: 385px;
 }
 
 .right {
-justify-self: right;
+    justify-self: right;
+}
+
+.left {
+    justify-self: left;
 }
 
 .message-item {

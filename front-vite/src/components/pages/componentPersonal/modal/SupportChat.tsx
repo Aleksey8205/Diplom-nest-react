@@ -145,13 +145,15 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
           <div className="message-box">
             {messages.length > 0 ? (
               messages.map((msg, idx) => (
+                <>
                 <div
                   key={idx}
                   className={`message-item ${
-                    msg.author === user.user?.id ? "right" : ""
+                    msg.author === user.user?.id ? "right" : "left"
                   }`}
                 >
-                  <p>{user.user?.name}</p>
+                  <p>{user.user?.name}</p> 
+                  {/* доделать получение имени по айди */}
                   <p>{msg.text}</p>
                   <p>
                     {new Date(msg.sentAt).toLocaleTimeString([], {
@@ -160,6 +162,7 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
                     })}
                   </p>
                 </div>
+              </>
               ))
             ) : (
               <p>Нет сообщений.</p>
