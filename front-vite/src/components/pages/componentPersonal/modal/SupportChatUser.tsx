@@ -1,3 +1,5 @@
+// src/components/mainPanel/SupportChat.tsx
+
 import { useState, useCallback, useEffect } from "react";
 import ReactModal from "react-modal";
 import {
@@ -22,26 +24,32 @@ import type { Request } from "../interface/requests";
 interface IModalProps {
   isOpen: boolean;
   onClose: () => void;
+  selectUser?: number;
+  isManager?: boolean;
 }
 
 const API_URL = import.meta.env.VITE_API_URL ?? "";
 
-const SupportChat = ({ isOpen, onClose }: IModalProps) => {
+const SupportChat = ({ isOpen, onClose, selectUser, isManager }: IModalProps) => {
   const user = useSelector((state: RootState) => state.auth);
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentMessage, setCurrentMessage] = useState<string>("");
   const [supportRequestId, setSupportRequestId] = useState<number | null>(null);
   const [request, setRequest] = useState<Request | null>(null);
 
+  // Кеш для хранения имён пользователей
+  const [userNames, setUserNames] = useState<Record<number, string | null>>({});
+
   useEffect(() => {
     if (isOpen) {
-      fetch(
-        `${API_URL}/support-requests/?user=${user.user?.id}&isActive=true`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      )
+      let queryParams = isManager && selectUser
+        ? `user=${selectUser}&isActive=true`
+        : `user=${user.user?.id}&isActive=true`;
+
+      fetch(`${API_URL}/support-requests/?${queryParams}`, {
+        method: "GET",
+        credentials: "include",
+      })
         .then((response) => response.json())
         .then((data) => {
           if (data.length > 0) {
@@ -60,27 +68,33 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
                 console.error("Ошибка при получении сообщений:", error);
               });
           } else {
-            fetch(`${API_URL}/support-requests`, {
-              method: "POST",
-              credentials: "include",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                user: user.user?.id,
-                isActive: true,
-              }),
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                setSupportRequestId(data.id);
-                setRequest(data);
-
-                setMessages([]);
+            if (!isManager) {
+              fetch(`${API_URL}/support-requests`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  user: user.user?.id,
+                  isActive: true,
+                }),
               })
-              .catch((error) => {
-                console.error("Ошибка при создании обращения:", error);
-              });
+                .then((response) => response.json())
+                .then((data) => {
+                  setSupportRequestId(data.id);
+                  setRequest(data);
+
+                  setMessages([]);
+                })
+                .catch((error) => {
+                  console.error("Ошибка при создании обращения:", error);
+                });
+            } else {
+              setSupportRequestId(null);
+              setRequest(null);
+              setMessages([]);
+            }
           }
         })
         .catch((error) => {
@@ -89,7 +103,7 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
     } else {
       disconnectSocket();
     }
-  }, [isOpen, user]);
+  }, [isOpen, user, selectUser, isManager]);
 
   useEffect(() => {
     if (supportRequestId) {
@@ -119,6 +133,43 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
     }
   }, [currentMessage, user, supportRequestId]);
 
+  useEffect(() => {
+    const messagesBox = document.querySelector(".message-box");
+    if (messagesBox) {
+      messagesBox.scrollTo(0, messagesBox.scrollHeight);
+    }
+  }, [messages]);
+
+  const fetchUserName = useCallback(
+    async (userId: number) => {
+      if (!userNames[userId]) {
+        try {
+          const response = await fetch(`${API_URL}/api/users/${userId}`, {
+            method: "GET",
+            credentials: "include",
+          });
+          const userData = await response.json();
+          setUserNames((prevUserNames) => ({
+            ...prevUserNames,
+            [userId]: userData.name,
+          }));
+        } catch (error) {
+          console.error("Ошибка при получении имени пользователя:", error);
+        }
+      }
+    },
+    [userNames]
+  );
+
+  useEffect(() => {
+    const uniqueUserIds = [...new Set(messages.map((msg) => msg.author))];
+    uniqueUserIds.forEach((userId) => {
+      if (!userNames[userId]) {
+        fetchUserName(userId);
+      }
+    });
+  }, [messages, userNames, fetchUserName]);
+
   return (
     <>
       <ReactModal
@@ -143,17 +194,23 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
           </header>
 
           <div className="message-box">
+            <p className="created-chat">
+              {request?.createdAt
+                ? new Date(request.createdAt)
+                    .toISOString()
+                    .split("T")[0]
+                    .replace(/-/g, ".")
+                : ""}
+            </p>
             {messages.length > 0 ? (
               messages.map((msg, idx) => (
-                <>
                 <div
                   key={idx}
                   className={`message-item ${
                     msg.author === user.user?.id ? "right" : "left"
                   }`}
                 >
-                  <p>{user.user?.name}</p> 
-                  {/* доделать получение имени по айди */}
+                  <p>{userNames[msg.author] || "Неизвестный пользователь"}</p> 
                   <p>{msg.text}</p>
                   <p>
                     {new Date(msg.sentAt).toLocaleTimeString([], {
@@ -162,7 +219,6 @@ const SupportChat = ({ isOpen, onClose }: IModalProps) => {
                     })}
                   </p>
                 </div>
-              </>
               ))
             ) : (
               <p>Нет сообщений.</p>
