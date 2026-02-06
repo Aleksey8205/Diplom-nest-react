@@ -18,9 +18,8 @@ import {
   emitMessage,
 } from "../../../../utils/socket";
 import { Message } from "../mainPanel/interface";
-import type { Request } from "../interface/requests";
+import type { Request, MarkMessagesAsReadDto } from "../interface/requests";
 
-// Интерфейс пропсов Modal'а
 interface IModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -37,7 +36,6 @@ const SupportChat = ({ isOpen, onClose, selectUser, isManager }: IModalProps) =>
   const [supportRequestId, setSupportRequestId] = useState<number | null>(null);
   const [request, setRequest] = useState<Request | null>(null);
 
-  // Кеш для хранения имён пользователей
   const [userNames, setUserNames] = useState<Record<number, string | null>>({});
 
   useEffect(() => {
@@ -116,6 +114,7 @@ const SupportChat = ({ isOpen, onClose, selectUser, isManager }: IModalProps) =>
         },
         onMarkedAsRead: () => {
           console.log("Messages marked as read");
+          markMessagesAsRead();
         },
       });
     }
@@ -169,6 +168,33 @@ const SupportChat = ({ isOpen, onClose, selectUser, isManager }: IModalProps) =>
       }
     });
   }, [messages, userNames, fetchUserName]);
+
+  const markMessagesAsRead = useCallback(() => {
+    if (supportRequestId) {
+      const createdBefore = new Date().toISOString();
+      const body: MarkMessagesAsReadDto = {
+        user: user.user?.id,
+        supportRequest: supportRequestId,
+        createdBefore,
+      };
+
+      fetch(`${API_URL}/support-requests/${supportRequestId}/mark-read`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Сообщения помечены как прочитанные:", data);
+        })
+        .catch((error) => {
+          console.error("Ошибка при пометке сообщений как прочитанных:", error);
+        });
+    }
+  }, [supportRequestId, user]);
 
   return (
     <>
