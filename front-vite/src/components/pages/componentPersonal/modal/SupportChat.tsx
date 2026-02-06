@@ -210,9 +210,12 @@ const SupportChat = ({ isOpen, onClose, selectUser, isManager }: IModalProps) =>
                     msg.author === user.user?.id ? "right" : "left"
                   }`}
                 >
-                  <p>{userNames[msg.author] || "Неизвестный пользователь"}</p> 
+                  <p className={`author-type ${
+                    msg.author === user.user?.id ? "right-type" : "left-type"
+                  }`}>{userNames[msg.author]}</p> 
                   <p>{msg.text}</p>
-                  <p>
+                  
+                  <p className="right">
                     {new Date(msg.sentAt).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",

@@ -5,7 +5,7 @@ import "../style/usersPanel.css";
 import UserCreate from "../modal/CreateUserModal.tsx";
 import { BookOpen, ContactRound, MessageSquare, UserRound } from "lucide-react";
 import Pagination from "./Pagination";
-import SupportChatUser from "../modal/SupportChatUser.tsx";
+import SupportChat from "../modal/SupportChat.tsx";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "";
 
@@ -158,7 +158,7 @@ const UsersComponent = () => {
           onPageChange={handlePageChange}
         />
       </section>
-      <SupportChatUser isOpen={chatModal}
+      <SupportChat isOpen={chatModal}
       selectUser={selectUser}
       isManager={true}
        onClose={() => setChatModal(false)} />

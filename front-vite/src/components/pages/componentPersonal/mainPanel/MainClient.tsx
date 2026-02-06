@@ -1,5 +1,5 @@
 import  { useState } from "react";
-import SupportChatUSer from "../modal/SupportChatUser";
+import SupportChat from "../modal/SupportChat";
 import "../style/mainPanel.css";
 import { Link } from "react-router-dom";
 import { MessageSquare } from "lucide-react";
@@ -29,7 +29,7 @@ const MainClient = () => {
       <button className="button-one chat" onClick={() => setCreateModal(true)}>
       <MessageSquare />
             </button>
-      <SupportChatUSer
+      <SupportChat
             isOpen={createModal}
             onClose={() => setCreateModal(false)}
           />

@@ -71,6 +71,17 @@
     justify-self: left;
 }
 
+.right-type {
+    justify-self: right;
+    color: #23685B;
+}
+
+.left-type {
+    justify-self: left;
+    color: #69786C;
+}
+
+
 .message-item {
     width: 250px;
     border: 1px solid black;

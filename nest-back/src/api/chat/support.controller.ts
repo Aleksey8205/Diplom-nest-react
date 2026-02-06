@@ -9,25 +9,21 @@ import { JwtGuard } from '../../guards/jwt.guards';
 export class SupportRequestController {
     constructor(private readonly service: SupportRequestService) {}
 
-    // GET /support-requests/?user=1&isActive=true
     @Get()
     async findAll(@Request() req, @Query() query: GetChatListParams) {
       return this.service.findSupportRequests(query);
     }
 
-    // POST /support-requests/
     @Post()
     async create(@Request() req, @Body() body: CreateSupportRequestDto) {
       return this.service.create(body);
     }
 
-    // POST /support-requests/{id}/messages
     @Post(':id/messages')
     async sendMessage(@Param('id') id: number, @Body() body: SendMessageDto) {
       return this.service.sendMessage({ ...body, supportRequest: id });
     }
 
-    // GET /support-requests/{id}/messages
     @Get(':id/messages')
     async getMessages(@Param('id') id: number) {
       const messages = await this.service.getMessages(id);
@@ -44,7 +40,6 @@ export class SupportRequestController {
       return { success: true };
     }
 
-    // DELETE /support-requests/{id}
     @Delete(':id')
     async delete(@Param('id') id: number) {
       await this.service.closeRequest(id);
