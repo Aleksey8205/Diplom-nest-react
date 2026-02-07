@@ -33,6 +33,7 @@ export class SupportRequestGateway {
 
   @SubscribeMessage('sendMessage')
   async handleSendMessage(client: Socket, data: SendMessageDto) {
+    console.log(data)
     try {
       const message = await this.service.sendMessage(data);
       const room = `chat-${data.supportRequest}`;
@@ -45,6 +46,7 @@ export class SupportRequestGateway {
   @SubscribeMessage('markMessagesAsRead')
   async handleMarkMessagesAsRead(client: Socket, data: MarkMessagesAsReadDto) {
     try {
+      console.log(data)
       await this.service.markMessagesAsRead(data);
       const room = `chat-${data.supportRequest}`;
       this.server.to(room).emit('messagesMarkedAsRead'); 

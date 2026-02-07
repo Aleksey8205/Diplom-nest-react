@@ -48,4 +48,3 @@ export function markMessagesAsRead(data: any) {
     socketInstance.emit('markMessagesAsRead', data);
   }
 }
-

@@ -34,8 +34,7 @@
     background-color: #FFFEF0;
     border-top: 1px solid black;
     border-bottom: 1px solid black;
-    padding-top: 16px;
-
+    padding: 16px;
     overflow-y: auto;
 }
 
@@ -85,7 +84,7 @@
 .message-item {
     width: 250px;
     border: 1px solid black;
-    margin-bottom: 10px;
+    margin-bottom: 16px;
     padding: 8px;
     background-color: #FFC33E;
     border-top-left-radius: 16px;
