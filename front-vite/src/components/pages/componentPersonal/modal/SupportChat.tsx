@@ -98,10 +98,11 @@ const SupportChat = ({ isOpen, onClose, selectUser, isManager }: IModalProps) =>
         },
         onNewMessage: (newMessage: Message) => {
           setMessages(prevMsgs =>  prevMsgs.concat(newMessage));
+          markMessagesAsRead(newMessage);
         },
         onMarkedAsRead: () => {
-          console.log('Сообщения отмечены прочитанными.');
         }
+        
       });
       handleMarkMessagesAsRead();
     }
@@ -162,10 +163,14 @@ const SupportChat = ({ isOpen, onClose, selectUser, isManager }: IModalProps) =>
   const handleMarkMessagesAsRead = useCallback(() => {
     if (supportRequestId && isOpen && user.user?.id) {
       const now = new Date();
+      const msSinceEpoch = now.getTime() + (3 * 60 * 60 * 1000); 
+      const modifiedDate = new Date(msSinceEpoch);
+      const isoString = modifiedDate.toISOString();   
+      console.log(isoString);
       markMessagesAsRead({
         user: user.user.id,
         supportRequest: supportRequestId,
-        createdBefore: now
+        createdBefore: isoString
       });
     }
   }, [supportRequestId, user, isOpen]);
@@ -174,6 +179,7 @@ const SupportChat = ({ isOpen, onClose, selectUser, isManager }: IModalProps) =>
     disconnectSocket();
     onClose();
   };
+
 
   return (
     <>

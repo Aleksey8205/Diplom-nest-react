@@ -77,7 +77,7 @@ export class SupportRequestService implements ISupportRequestService {
   }
 
   async markMessagesAsRead(dto: MarkMessagesAsReadDto): Promise<void> {
-    await this.messageRepository.update(
+     await this.messageRepository.update(
       {
         supportRequest: { id: dto.supportRequest },
         sentAt: LessThanOrEqual(dto.createdBefore),

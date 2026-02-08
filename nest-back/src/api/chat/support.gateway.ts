@@ -45,18 +45,15 @@ export class SupportRequestGateway {
 
   @SubscribeMessage('markMessagesAsRead')
   async handleMarkMessagesAsRead(client: Socket, data: MarkMessagesAsReadDto) {
+    console.log(data)
     try {
-      console.log('Received markMessagesAsRead request:', data); 
-
       if (!data.user || !data.supportRequest || !data.createdBefore) {
         throw new Error('Invalid input parameters for marking messages as read');
       }
-  
-      await this.service.markMessagesAsRead(data);
+       await this.service.markMessagesAsRead(data);
       
       const room = `chat-${data.supportRequest}`;
       this.server.to(room).emit('messagesMarkedAsRead');
-  
     } catch (err) {
       console.error(err);
       client.emit('error', err.message);

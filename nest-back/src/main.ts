@@ -5,8 +5,10 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import cookieParser from 'cookie-parser';
 import * as express from 'express';
+import dotenv from 'dotenv'
+dotenv.config()
 
-
+process.env.TZ = 'Europe/Moscow';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

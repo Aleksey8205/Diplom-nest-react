@@ -9,13 +9,13 @@ export class Message {
   @Column()
   author: number;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp without time zone', default: () => 'CURRENT_TIMESTAMP' })
   sentAt: Date;
 
   @Column({ type: 'varchar' })
   text: string;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamp without time zone', nullable: true })
   readAt?: Date;
 
   @ManyToOne(() => SupportRequest, (supportRequest) => supportRequest.messages)

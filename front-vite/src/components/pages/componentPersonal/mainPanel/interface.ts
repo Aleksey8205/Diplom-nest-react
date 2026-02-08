@@ -13,7 +13,7 @@ export interface Rental {
  export interface Message {
   id: number;
   author: number;
-  sentAt: string; 
+  sentAt: Date; 
   text: string;
-  readAt: string | null;
+  readAt: Date | null;
 }
