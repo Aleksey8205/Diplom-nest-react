@@ -46,10 +46,12 @@ export class SupportRequestGateway {
   @SubscribeMessage('markMessagesAsRead')
   async handleMarkMessagesAsRead(client: Socket, data: MarkMessagesAsReadDto) {
     try {
-      console.log(data)
       await this.service.markMessagesAsRead(data);
       const room = `chat-${data.supportRequest}`;
-      this.server.to(room).emit('messagesMarkedAsRead'); 
+  
+      const updatedMessages = await this.service.getMessages(data.supportRequest);
+  
+      this.server.to(room).emit('messagesMarkedAsRead', updatedMessages); 
     } catch (err) {
       client.emit('error', err.message);
     }

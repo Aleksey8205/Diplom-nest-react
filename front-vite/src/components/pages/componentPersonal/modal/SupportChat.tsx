@@ -54,7 +54,6 @@ const SupportChat = ({ isOpen, onClose, selectUser, isManager }: IModalProps) =>
             credentials: 'include'
           }).then(resp => resp.json()).then(msgs => {
             setMessages(msgs.sort((a: { sentAt: string; }, b: { sentAt: any; }) => a.sentAt.localeCompare(b.sentAt)));
-            handleMarkMessagesAsRead()
           }).catch(error => {
             console.error('Ошибка при получении сообщений:', error);
           });
@@ -102,7 +101,7 @@ const SupportChat = ({ isOpen, onClose, selectUser, isManager }: IModalProps) =>
         },
         onMarkedAsRead: () => {
           console.log('Сообщения отмечены прочитанными.');
-          updateMessagesReadStatus();
+          handleMarkMessagesAsRead();
         }
       });
     }
@@ -168,15 +167,6 @@ const SupportChat = ({ isOpen, onClose, selectUser, isManager }: IModalProps) =>
       });
     }
   }, [supportRequestId, user, isOpen]);
-
-  const updateMessagesReadStatus = useCallback(() => {
-    const now = new Date().toISOString();
-    const updatedMessages = messages.map((msg) => ({
-      ...msg,
-      readAt: msg.readAt || now
-    }));
-    setMessages(updatedMessages);
-  }, [messages]);
 
   const closeModalAndDisconnect = () => {
     disconnectSocket();
