@@ -98,10 +98,7 @@ const SupportChat = ({ isOpen, onClose, selectUser, isManager }: IModalProps) =>
           console.log('Подключились к серверу WebSocket.');
         },
         onNewMessage: (newMessage: Message) => {
-          setMessages(prevMsgs => [
-            ...prevMsgs.filter(m => m.id !== newMessage.id),
-            newMessage
-          ]);
+          setMessages(prevMsgs =>  prevMsgs.concat(newMessage));
         },
         onMarkedAsRead: () => {
           console.log('Сообщения отмечены прочитанными.');
@@ -128,6 +125,7 @@ const SupportChat = ({ isOpen, onClose, selectUser, isManager }: IModalProps) =>
       if (messagesBox) {
         messagesBox.scrollTo(0, messagesBox.scrollHeight);
       }
+
     }
   }, [isOpen, messages]);
 
