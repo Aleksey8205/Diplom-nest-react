@@ -101,9 +101,9 @@ const SupportChat = ({ isOpen, onClose, selectUser, isManager }: IModalProps) =>
         },
         onMarkedAsRead: () => {
           console.log('Сообщения отмечены прочитанными.');
-          handleMarkMessagesAsRead();
         }
       });
+      handleMarkMessagesAsRead();
     }
   }, [isOpen, supportRequestId]);
 
@@ -116,6 +116,8 @@ const SupportChat = ({ isOpen, onClose, selectUser, isManager }: IModalProps) =>
       });
       setCurrentMessage('');
     }
+    
+
   }, [isOpen, currentMessage, user, supportRequestId]);
 
   useEffect(() => {
