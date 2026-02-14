@@ -13,7 +13,7 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-   fetch(`${API_URL}/auth/user-info`, { credentials: 'include' })
+   fetch(`${API_URL}/api/auth/user-info`, { credentials: 'include' })
    .then(response => {
     if (!response.ok) {
       throw new Error(`Ошибка сети: ${response.status}`);

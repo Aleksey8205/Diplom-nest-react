@@ -10,7 +10,7 @@ const ActualBook = ({ onStartBooking }: IStartBooking) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/books`)
+    fetch(`${API_URL}/api/comon/books`)
       .then((response) => response.json())
       .then((data) => setBooks(data))
       .catch((error) => console.log(error));

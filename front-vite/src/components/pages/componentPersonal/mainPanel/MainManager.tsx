@@ -7,21 +7,27 @@ const MainManager = () => {
   const [users, setUsers] = useState([]);
   const [books, setBooks] = useState([]);
   const [rental, setRental] = useState<Rental[]>([])
+  const [unread, setUnread] = useState()
 
   useEffect(() => {
-    fetch(`${API_URL}/api/users`)
+    fetch(`${API_URL}/api/manager/users`, { credentials: 'include' })
       .then((response) => response.json())
       .then((data) => setUsers(data))
       .catch((error) => console.log(error));
 
-    fetch(`${API_URL}/api/rentals`)
+    fetch(`${API_URL}/api/client/rentals`, { credentials: 'include' })
       .then((response) => response.json())
       .then((data) => setRental(data))
       .catch((error) => console.log(error));
 
-    fetch(`${API_URL}/api/books`)
+    fetch(`${API_URL}/api/comon/books`, { credentials: 'include' })
       .then((response) => response.json())
       .then((data) => setBooks(data))
+      .catch((error) => console.log(error));
+
+      fetch(`${API_URL}/api/comon/support-requests/unread-count`, { credentials: 'include' })
+      .then((response) => response.json())
+      .then((data) => setUnread(data))
       .catch((error) => console.log(error));
   }, []);
 
@@ -49,7 +55,7 @@ const MainManager = () => {
           <div className="info-item">
             <p>Всего пользователей: {usersLength}</p>
             <p>С активными бронированиями: {uniqueUsersCount}</p>
-            <p>Новых сообщений:     </p>
+            <p>Новых сообщений: {unread}</p>
             <button className="button-one">Открыть список</button>
           </div>
         </div>

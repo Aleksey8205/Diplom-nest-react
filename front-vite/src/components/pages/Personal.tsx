@@ -9,7 +9,7 @@ const PersonalPage = () => {
   const [user, setUser] = useState<UserInfo | null>(null);
 
   useEffect(() => {
-    fetch(`${API_URL}/auth/user-info`, { credentials: "include" })
+    fetch(`${API_URL}/api/auth/user-info`, { credentials: "include" })
       .then((response) => response.json())
       .then((data) => setUser(data))
       .catch((error) => console.log(error));

@@ -1,29 +1,21 @@
 import { Controller, Post, Get, Patch, Delete, Param, Body, UseGuards, Request, Query } from '@nestjs/common';
-import { SupportRequestService } from './support.service';
-import { SendMessageDto, GetChatListParams, MarkMessagesAsReadDto, CreateSupportRequestDto } from './dto/support.dto';
+import { SupportRequestService } from '../support.service';
+import { SendMessageDto, GetChatListParams, MarkMessagesAsReadDto } from '../dto/support.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { JwtGuard } from '../../guards/jwt.guards';
+import { JwtGuard } from '../../../guards/jwt.guards';
 
 @UseGuards(JwtGuard)
-@Controller('support-requests')
-export class SupportRequestController {
+@Controller('api/comon/support-requests')
+export class SupportRequestControllerComon {
     constructor(private readonly service: SupportRequestService) {}
 
-    @Get()
-    async findAll(@Request() req, @Query() query: GetChatListParams) {
-      return this.service.findSupportRequests(query);
-    }
-
-    @Post()
-    async create(@Request() req, @Body() body: CreateSupportRequestDto) {
-      return this.service.create(body);
-    }
-
+      
     @Post(':id/messages')
     async sendMessage(@Param('id') id: number, @Body() body: SendMessageDto) {
       return this.service.sendMessage({ ...body, supportRequest: id });
     }
 
+        
     @Get(':id/messages')
     async getMessages(@Param('id') id: number) {
       const messages = await this.service.getMessages(id);
@@ -32,9 +24,8 @@ export class SupportRequestController {
       }
       return messages;
     }
-
-    // PATCH /support-requests/{id}/mark-read
-    @Patch(':id/mark-read')
+        
+    @Patch(':id/messages/read')
     async markMessagesAsRead(@Param('id') id: number, @Body() body: MarkMessagesAsReadDto) {
       await this.service.markMessagesAsRead({ ...body, supportRequest: id });
       return { success: true };
@@ -46,13 +37,8 @@ export class SupportRequestController {
       return { success: true };
     }
 
-    // GET /support-requests/unread-count/{id}
-    @Get('unread-count/:id')
-    async unreadCount(@Param('id') id: number, @Request() req) {
-      if (req.user.role === 'employee') {
-        return this.service.getUnreadCountForEmployee(id);
-      } else {
-        return this.service.getUnreadCountForClient(id);
-      }
+    @Get('unread-count')
+    async globalUnreadCount(@Request() req) {
+      return this.service.getUnreadCount();
     }
 }

@@ -1,3 +1,5 @@
+
+
 export interface UserMap {
   id: number;
   name: string;
@@ -26,4 +28,11 @@ export interface LibraryMap {
   name: string;
   description: string;
 }
+
+export interface ChatItem {
+  id: number;
+  user: number;
+  createdAt: string;
+  isActive: boolean;
+};
 

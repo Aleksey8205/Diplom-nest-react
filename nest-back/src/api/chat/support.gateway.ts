@@ -3,6 +3,7 @@ import { Server, Socket } from 'socket.io';
 import { SupportRequestService } from './support.service';
 import { SendMessageDto, MarkMessagesAsReadDto } from './dto/support.dto';
 
+
 @WebSocketGateway()
 export class SupportRequestGateway {
   constructor(private readonly service: SupportRequestService) {}
@@ -33,7 +34,6 @@ export class SupportRequestGateway {
 
   @SubscribeMessage('sendMessage')
   async handleSendMessage(client: Socket, data: SendMessageDto) {
-    console.log(data)
     try {
       const message = await this.service.sendMessage(data);
       const room = `chat-${data.supportRequest}`;
@@ -45,7 +45,6 @@ export class SupportRequestGateway {
 
   @SubscribeMessage('markMessagesAsRead')
   async handleMarkMessagesAsRead(client: Socket, data: MarkMessagesAsReadDto) {
-    console.log(data)
     try {
       if (!data.user || !data.supportRequest || !data.createdBefore) {
         throw new Error('Invalid input parameters for marking messages as read');

@@ -8,7 +8,7 @@
     border: 1px solid black;
     border-radius: 16px;
     background-color: #D6EAD8;
-
+  margin-top: 25px;
 
 }
 
@@ -82,4 +82,14 @@
   .pagination button:disabled {
     cursor: not-allowed;
     color: black;
+  }
+
+  .unread {
+    position: relative;
+    left: 15px;
+    bottom: 30px;
+    width: 14px;
+    height: 14px;
+    background-color: #FF4347;
+    border-radius: 50%;
   }

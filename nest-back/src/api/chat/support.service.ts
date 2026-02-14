@@ -7,7 +7,7 @@ import {
   SendMessageDto,
   GetChatListParams,
   MarkMessagesAsReadDto,
-  CreateSupportRequestDto
+  CreateSupportRequestDto,
 } from './dto/support.dto';
 import { ISupportRequestService } from './interfaces/interface';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -22,7 +22,9 @@ export class SupportRequestService implements ISupportRequestService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async findSupportRequests(params: GetChatListParams): Promise<SupportRequest[]> {
+  async findSupportRequests(
+    params: GetChatListParams,
+  ): Promise<SupportRequest[]> {
     let conditions = {};
 
     if (params.isActive !== undefined) {
@@ -36,11 +38,10 @@ export class SupportRequestService implements ISupportRequestService {
     return this.supportRequestRepository.find({ where: conditions });
   }
 
-
   async create(data: CreateSupportRequestDto): Promise<SupportRequest> {
     const newRequest = this.supportRequestRepository.create({
       user: data.user,
-      isActive: true, 
+      isActive: true,
       createdAt: new Date(),
     });
 
@@ -71,13 +72,15 @@ export class SupportRequestService implements ISupportRequestService {
     });
   }
 
-  subscribe(handler: (supportRequest: SupportRequest, message: Message) => void): () => void {
+  subscribe(
+    handler: (supportRequest: SupportRequest, message: Message) => void,
+  ): () => void {
     this.eventEmitter.on('new_message', handler);
     return () => this.eventEmitter.off('new_message', handler);
   }
 
   async markMessagesAsRead(dto: MarkMessagesAsReadDto): Promise<void> {
-     await this.messageRepository.update(
+    await this.messageRepository.update(
       {
         supportRequest: { id: dto.supportRequest },
         sentAt: LessThanOrEqual(dto.createdBefore),
@@ -86,22 +89,10 @@ export class SupportRequestService implements ISupportRequestService {
     );
   }
 
-  async getUnreadCountForEmployee(supportRequestId: number): Promise<number> {
+  async getUnreadCount(): Promise<number> {
     return this.messageRepository.count({
       where: {
-        supportRequest: { id: supportRequestId },
         readAt: IsNull(),
-        author: Not(In(['employee'])),
-      },
-    });
-  }
-
-  async getUnreadCountForClient(supportRequestId: number): Promise<number> {
-    return this.messageRepository.count({
-      where: {
-        supportRequest: { id: supportRequestId },
-        readAt: IsNull(),
-        author: In(['employee']),
       },
     });
   }

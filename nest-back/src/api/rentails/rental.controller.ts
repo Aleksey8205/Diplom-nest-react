@@ -7,7 +7,7 @@ import { Roles } from 'src/guards/roles.decorator';
 
 @UseGuards(JwtGuard, RolesGuard)
 @Roles('client')
-@Controller('api/rentals')
+@Controller('api/client/rentals')
 export class BookRentalController {
   constructor(private readonly bookRentalService: BookRentalService) {}
 

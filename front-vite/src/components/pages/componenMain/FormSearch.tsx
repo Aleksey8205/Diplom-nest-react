@@ -18,7 +18,7 @@ const FormSearch = ({ onStartSearch, onStartBooking }: IStartSearch & IStartBook
     onStartSearch(); 
     setIsSearching(true);
     try {
-        const response = await fetch(`${API_URL}/api/books?title=${title}&author=${author}&isAvailable=true`);
+        const response = await fetch(`${API_URL}/api/comon/books?title=${title}&author=${author}&isAvailable=true`);
         const results = await response.json();
 
         let uniqueBooksMap = new Map<string, Book>();

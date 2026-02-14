@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
-import { useUser } from "../interface/UserContext.ts";
-import type { RentalMap, UserMap } from "./interface/interface.ts";
+import { useSelector } from 'react-redux';
+import type { RentalMap, UserMap, ChatItem } from "./interface/interface.ts";
 import "../style/usersPanel.css";
 import UserCreate from "../modal/CreateUserModal.tsx";
 import { BookOpen, ContactRound, MessageSquare, UserRound } from "lucide-react";
 import Pagination from "./Pagination";
-import SupportChat from "../modal/SupportChat.tsx";
+import { RootState } from "../../../../utils/interface.ts";
+import SupportChatManager from "../modal/SupportChatManager.tsx";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "";
 
+
+
 const UsersComponent = () => {
-  const user = useUser();
+  const user = useSelector((state: RootState) => state.auth);
+
   const [users, setUsers] = useState<UserMap[]>([]);
   const [rentals, setRentals] = useState<RentalMap[]>([]);
   const [searchParam, setSearchParam] = useState("");
@@ -18,7 +22,7 @@ const UsersComponent = () => {
 
   const [chatModal, setChatModal] = useState(false);
   const [selectUser, setSelectUser] = useState<number>()
-
+  const [chatActive, setChatActive] = useState<Record<string, boolean>>();
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
 
@@ -28,16 +32,25 @@ const UsersComponent = () => {
 
   useEffect(() => {
     Promise.all([
-      fetch(`${API_URL}/api/users`, { credentials: "include" }),
-      fetch(`${API_URL}/api/rentals`, { credentials: "include" }),
+      fetch(`${API_URL}/api/${user.user?.role}/users`, { credentials: "include" }),
+      fetch(`${API_URL}/api/client/rentals`, { credentials: "include" }),
+      fetch(`${API_URL}/api/${user.user?.role}/support-requests`, { credentials: "include" }),
     ])
-      .then((responses) => Promise.all(responses.map((res) => res.json())))
-      .then(([usersResponse, rentalsResponse]) => {
+      .then((responses) => Promise.all(responses.map(res => res.json())))
+      .then(([usersResponse, rentalsResponse, chatActiveList]) => {
         setUsers(usersResponse);
         setRentals(rentalsResponse);
+
+        const chatActiveObj: Record<number, boolean> = chatActiveList.reduce((acc: Record<number, boolean>, item: ChatItem) => {
+          acc[item.user] = item.isActive;
+          return acc;
+        }, {});
+  
+        setChatActive(chatActiveObj)
       })
       .catch((error) => console.error("Ошибка загрузки:", error));
   }, []);
+
 
   const totalPages = Math.ceil(users.length / usersPerPage);
 
@@ -83,7 +96,7 @@ const UsersComponent = () => {
       <section>
         <div className="head-panel">
           <h2 className="hello-panel">Пользователи</h2>
-          {user && user.role === "admin" && (
+          {user && user.user?.role === "admin" && (
             <button className="button-one" onClick={() => setCreateModal(true)}>
               Добавить пользователя
             </button>
@@ -144,9 +157,13 @@ const UsersComponent = () => {
                 <p>
                   <button
                    onClick={() => handleSelectUser(user)}
-
                    >
+                    <span>
                     <MessageSquare />
+                    {chatActive && chatActive[user.id] && (
+                      <div  className="unread"></div>
+                    )}
+                  </span>
                   </button>
                 </p>
               </div>
@@ -158,9 +175,8 @@ const UsersComponent = () => {
           onPageChange={handlePageChange}
         />
       </section>
-      <SupportChat isOpen={chatModal}
+      <SupportChatManager isOpen={chatModal}
       selectUser={selectUser}
-      isManager={true}
        onClose={() => setChatModal(false)} />
     </>
   );

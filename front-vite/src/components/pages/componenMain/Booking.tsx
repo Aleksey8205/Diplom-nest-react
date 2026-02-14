@@ -27,7 +27,7 @@ const Booking = ({ bookItem }: IBooking) => {
     if (bookItem) {
       setBook(bookItem);
       fetch(
-        `${API_URL}/api/books?title=${bookItem.title}&author=${bookItem.author}&isAvailable=true`
+        `${API_URL}/api/comon/books?title=${bookItem.title}&author=${bookItem.author}&isAvailable=true`
       )
         .then((res) => res.json())
         .then((data: Book[]) => {
@@ -83,7 +83,7 @@ const Booking = ({ bookItem }: IBooking) => {
     console.log(rentalData);
 
     try {
-      const response = await fetch(`${API_URL}/api/rentals`, {
+      const response = await fetch(`${API_URL}/api/client/rentals`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

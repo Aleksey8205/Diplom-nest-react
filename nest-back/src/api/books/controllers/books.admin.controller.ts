@@ -6,33 +6,26 @@ import {
   Body,
   Param,
   UseInterceptors,
-  Get,
-  Query,
   Req,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
-import { BooksService } from './books.service';
+import { BooksService } from '../books.service';
 import { BooksEntity } from 'src/entities/books.entity';
-import { UpdateBookDTO, CreateBookDTO } from './DTO/BookDto';
+import { UpdateBookDTO, CreateBookDTO } from '../DTO/BookDto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterConfig } from 'src/config/multer.config';
 import { JwtGuard } from 'src/guards/jwt.guards';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/guards/roles.decorator';
 
-@Controller('api/books')
-export class BookController {
+@Controller('api/admin/books')
+export class BookAdminController {
   constructor(private readonly bookService: BooksService) {}
 
-  @Get('/')
-  async findBook(@Query() query: any): Promise<BooksEntity[]> {
-    return this.bookService.findBook(query);
-  } //обращение через http://localhost:3000/books?интерфейс=значение
-
-
   @UseGuards(JwtGuard, RolesGuard)
-  @Roles('admin', 'manager')
-  @Post()
+  @Roles('admin')
+  @Post('')
   @UseInterceptors(FileInterceptor('coverImage', MulterConfig))
   async createBook(@Body() data: CreateBookDTO, @Req() req) {
     const file = req.file;
@@ -44,18 +37,18 @@ export class BookController {
   }
 
   @UseGuards(JwtGuard, RolesGuard)
-  @Roles('admin', 'manager')
-  @Put(':id')
+  @Roles('admin')
+  @Patch(':id')
   @UseInterceptors(FileInterceptor('coverImage', MulterConfig))
   async updateBook(
     @Param('id') id: number,
     @Body()
+    data: UpdateBookDTO,
     @Req()
     req,
-    data: UpdateBookDTO,
   ): Promise<BooksEntity> {
     const file = req.file;
-
+    console.log(data)
     if (file) {
       data.coverImage = `http://localhost:3000/uploads/${file.filename}`;
     }
@@ -64,14 +57,9 @@ export class BookController {
   }
 
   @UseGuards(JwtGuard, RolesGuard)
-  @Roles('admin', 'manager')
+  @Roles('admin')
   @Delete(':id')
   async deleteBook(@Param('id') id: number) {
     return await this.bookService.deleteBook(id);
-  }
-
-  @Get(':id')
-  async findBookById(@Param('id') id: number) {
-    return await this.bookService.findBookById(id);
   }
 }

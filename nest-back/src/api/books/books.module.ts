@@ -1,20 +1,24 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BooksEntity } from 'src/entities/books.entity';
 import { APP_PIPE } from '@nestjs/core';
-import { BookController } from './books.controller';
 import { BooksService } from './books.service';
-import { UsersModule } from '../users/users.module';
 import { LibraryModule } from '../library/library.module';
 import { ValidationPipe } from './validation/validation.pipe';
+import { BookAdminController } from './controllers/books.admin.controller';
+import { BookCommonController } from './controllers/books.common.controller';
+import { BookManagerController } from './controllers/books.manager.controller';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([BooksEntity]),
-        LibraryModule,
-        UsersModule,
+       forwardRef(() =>  LibraryModule),
     ],
-    controllers: [BookController],
+    controllers: [
+        BookAdminController,
+        BookCommonController,
+        BookManagerController
+    ],
     providers: [
         BooksService,
         

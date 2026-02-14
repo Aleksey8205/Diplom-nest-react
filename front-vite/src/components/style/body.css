@@ -119,6 +119,8 @@ input {
     font-family: Monsterrat-regular;
     font-weight: 400;
     font-size: 14px;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 .textarea {

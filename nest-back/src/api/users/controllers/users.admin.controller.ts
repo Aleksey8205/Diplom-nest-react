@@ -1,12 +1,12 @@
 import { Controller, Post, Get, Param, Body, Query, UseGuards, Response } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { UserEntity } from '../../entities/user.entity';
+import { UsersService } from '../users.service';
+import { UserEntity } from '../../../entities/user.entity';
 import { JwtGuard } from 'src/guards/jwt.guards';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/guards/roles.decorator';
 
-@Controller('api/users')
-export class UsersController {
+@Controller('api/admin/users')
+export class UsersAdminController {
   constructor(private readonly usersService: UsersService) { }
 
   @UseGuards(JwtGuard, RolesGuard)

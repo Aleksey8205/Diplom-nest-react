@@ -32,7 +32,7 @@ const Aside = () => {
   }
 
   const Logout = () => {
-    fetch(`${API_URL}/auth/logout`, {
+    fetch(`${API_URL}/api/auth/logout`, {
       method: "POST",
       credentials: "include",
     })

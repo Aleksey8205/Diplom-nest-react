@@ -24,7 +24,7 @@ const RegisterModal = ({ isOpen, onClose }: IRegisterModalProps) => {
     setMessage('')
     const registrationData = { email, password, name, contactPhone };
     
-    fetch(`${API_URL}/auth/register`, {
+    fetch(`${API_URL}/api/client/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

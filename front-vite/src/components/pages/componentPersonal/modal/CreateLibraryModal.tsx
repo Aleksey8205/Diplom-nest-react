@@ -21,7 +21,7 @@ const LibraryCreate = ({ isOpen, onClose }: IModalProps) => {
     setMessage("");
     const createData = { name, address, description };
 
-    fetch(`${API_URL}/api/users`, {
+    fetch(`${API_URL}/api/admin/libraries`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

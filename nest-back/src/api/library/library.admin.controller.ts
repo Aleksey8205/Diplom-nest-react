@@ -16,7 +16,7 @@ import { Roles } from 'src/guards/roles.decorator';
 
 @UseGuards(JwtGuard, RolesGuard)
 @Roles('admin')
-@Controller('api/library')
+@Controller('api/admin/libraries')
 export class LibraryController {
   constructor(private readonly libraryService: LibraryService) {}
 

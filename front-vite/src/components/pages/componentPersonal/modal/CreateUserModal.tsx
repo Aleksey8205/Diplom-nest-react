@@ -24,7 +24,7 @@ const UserCreate = ({ isOpen, onClose }: IModalProps) => {
     setMessage('')
     const createData = { email, password, name, contactPhone, role}
 
-    fetch(`${API_URL}/api/users`, {
+    fetch(`${API_URL}/api/admin/users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
