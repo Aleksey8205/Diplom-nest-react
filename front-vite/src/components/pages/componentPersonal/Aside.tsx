@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import MainComponent from "./mainPanel/MainComponent.tsx";
 import UsersComponent from "./usersPanel/UsersComponent.tsx";
 import LibrariesComponent from "./libraryPanel/LibrariesComponent.tsx";
+import ProfileComponent from "./profilePanel/ProfilePanel.tsx";
 
 import { House } from "lucide-react";
 import { UsersRound } from "lucide-react";
@@ -206,8 +207,8 @@ const Aside = () => {
           {selectedTab === "main" && <MainComponent />}
           {selectedTab === "users" && <UsersComponent />}
           {selectedTab === "libraries" && <LibrariesComponent />}
-          {/* {selectedTab === "books" && <BooksComponent />}
-          {selectedTab === "settings" && <SettingsComponent />} */}
+          {/* {selectedTab === "books" && <BooksComponent />} */}
+          {selectedTab === "settings" && <ProfileComponent />}
         </div>
       </div>
     </>

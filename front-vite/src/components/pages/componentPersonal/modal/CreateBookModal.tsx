@@ -20,11 +20,13 @@ const BookCreate = ({ isOpen, onClose, libraryId }: IModalProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [message, setMessage] = useState("");
 
+  const availableCopies = totalCopies;
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setMessage("");
 
-    const createData = { libraryId, title, author, year, description, totalCopies };
+    const createData = { libraryId, title, author, year, description, totalCopies, availableCopies };
 
     const formData = new FormData();
     if (selectedFile) {
