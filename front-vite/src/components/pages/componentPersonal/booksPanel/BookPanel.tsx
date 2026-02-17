@@ -1,7 +1,7 @@
-import { useUser } from "../interface/UserContext.ts";
+// import { useUser } from "../interface/UserContext.ts";
 
 const MainComponent = () => {
-  const user = useUser();
+  // const user = useUser();
   return (
     <>
       {/* {user && user.role === "manager" && <BookPanelManager />} */}

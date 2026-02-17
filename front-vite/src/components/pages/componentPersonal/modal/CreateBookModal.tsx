@@ -58,6 +58,7 @@ const BookCreate = ({ isOpen, onClose, libraryId }: IModalProps) => {
         setTitle("");
         setDescription("");
         setSelectedFile(null);
+        console.log(result)
       })
       .catch((error) => {
         setMessage(error.message);

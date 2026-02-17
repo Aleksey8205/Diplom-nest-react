@@ -79,6 +79,7 @@ const BookPatch = ({ isOpen, onClose, bookId }: IModalProps) => {
         setDescription("");
         setSelectedFile(null);
         onClose(); 
+        console.log(result)
       })
       .catch((error) => {
         setMessage(error.message);

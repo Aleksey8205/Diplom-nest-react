@@ -38,6 +38,8 @@ const SupportChatClient = ({ isOpen, onClose }: IModalProps) => {
 
   const [userNames, setUserNames] = useState<Record<number, string | null>>({});
 
+console.log(request)
+
   useEffect(() => {
     if (isOpen) {
       fetch(

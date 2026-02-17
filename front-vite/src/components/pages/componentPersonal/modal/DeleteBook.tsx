@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import ReactModal from "react-modal";
 import "../../componenMain/style/modal.css";
 import { X } from "lucide-react";
@@ -9,9 +9,11 @@ interface IModalProps {
   bookId: number | undefined;
 }
 
-const API_URL = import.meta.env.VITE_API_URL ?? "";
+// const API_URL = import.meta.env.VITE_API_URL ?? "";
 
-const DeleteBook = ({ isOpen, onClose, bookId }: IModalProps) => {
+const DeleteBook = ({ isOpen, onClose,
+  //  bookId 
+  }: IModalProps) => {
     const [message, setMessage] = useState('')
 
 

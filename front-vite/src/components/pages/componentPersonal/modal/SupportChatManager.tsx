@@ -43,6 +43,8 @@ const SupportChatManager = ({
   const [supportRequestId, setSupportRequestId] = useState<number | null>(null);
   const [request, setRequest] = useState<Request | null>(null);
 
+  console.log(request)
+
   const [userNames, setUserNames] = useState<Record<number, string | null>>({});
 
   useEffect(() => {
